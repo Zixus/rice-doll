@@ -133,7 +133,7 @@ def extract_desc (raw_soup):
 			desc += ACTIONS[buff.get("alt")]
 		elif (raw_desc[0].name is None):
 			raw_desc.pop(0)
-			desc += str(buff.get_text())
+			desc += str(buff)
 		print (raw_desc)
 		print (desc)
 	description['desc'] = desc
