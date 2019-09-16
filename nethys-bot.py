@@ -117,9 +117,9 @@ def extract_desc (raw_soup):
 		elif (buff.name == "i"):
 			desc += "*" + buff.get_text() + "*"
 		elif (buff.name == "br"):
-			desc += "\n"
+			desc += "\n "
 		elif (buff.name == "hr"):
-			desc += "\n\n"
+			desc += "\n \n "
 		elif (buff.name == "ul"):
 			for content in buff.contents:
 				desc += "- " + content.get_text() + "\n "
