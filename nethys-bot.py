@@ -124,7 +124,7 @@ def extract_desc (raw_soup):
 		elif (buff.name == "ul"):
 			i = 0
 			while (i < len(buff.contents)):
-				desc += "- " + buff.contents[i].get_text() + "\n "
+				desc += "- " + buff.contents[i].get_text() + "\n"
 				i += 1
 		elif (buff.name == "span"):
 			traits.append(buff.get_text())
@@ -133,9 +133,7 @@ def extract_desc (raw_soup):
 			desc += ACTIONS[buff.get("alt")]
 		elif (raw_desc[0].name is None):
 			raw_desc.pop(0)
-			desc += str(buff)
-		print (raw_desc)
-		print (desc)
+			desc += buff
 	description['desc'] = desc
 	for trait in traits:
 		description['desc'] = trait + description['desc']
