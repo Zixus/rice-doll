@@ -135,7 +135,7 @@ def extract_desc (raw_soup):
 			desc += buff
 	description['desc'] = desc
 	for trait in traits:
-		description['desc'] = trait + description['desc']
+		description['desc'] = trait + " " + description['desc']
 	if (len(traits) > 0):
 		description['desc'] = "**Traits** " + description['desc']
 	return (description)
