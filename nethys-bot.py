@@ -122,8 +122,10 @@ def extract_desc (raw_soup):
 		elif (buff.name == "hr"):
 			desc += "\n \n "
 		elif (buff.name == "ul"):
-			for content in buff.contents:
-				desc += "- " + content.get_text() + "\n "
+			i = 0
+			while (i < len(buff.contents)):
+				desc += "- " + buff.contents[i].get_text() + "\n "
+				i += 1
 		elif (buff.name == "span"):
 			traits.append(buff.get_text())
 		elif (buff.name == "img" and buff.get("alt") is not None):
