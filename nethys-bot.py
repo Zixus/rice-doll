@@ -177,7 +177,7 @@ class NethysClient(discord.Client):
 			if (command in COMMANDS):
 				if (command == "help"):
 					help_text = "**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?help**"
-					message.channel.send(embed=discord.Embed(title="Command List",description=help_text))
+					await message.channel.send(embed=discord.Embed(title="Command List",description=help_text))
 				else:
 					arg = command_line[1]
 					search_res = get_search_output(command, arg)
