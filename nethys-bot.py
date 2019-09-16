@@ -274,6 +274,5 @@ class NethysClient(discord.Client):
 						message.channel.send("Cannot find " + arg + " in " + command)
 			else:
 				message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
-
 client = NethysClient()
 client.run(TOKEN)
