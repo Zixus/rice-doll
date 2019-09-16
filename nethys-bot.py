@@ -131,8 +131,9 @@ def extract_desc (raw_soup):
 		elif (buff.name == "img" and buff.get("alt") is not None):
 			raw_desc.pop(0)
 			desc += ACTIONS[buff.get("alt")]
-		if (raw_desc[0].name is None):
-			desc += str(buff)
+		elif (raw_desc[0].name is None):
+			raw_desc.pop(0)
+			desc += str(buff.get_text())
 		print (raw_desc)
 		print (desc)
 	description['desc'] = desc
