@@ -169,6 +169,8 @@ class NethysClient(discord.Client):
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
+		await client.change_presence(activity=discord.Game("?help"))
+
 
 	async def on_message(self, message):
 		if (message.content.startswith(self.prefix)):
@@ -235,35 +237,35 @@ class NethysClient(discord.Client):
 									if (str(reaction) == '🇦'):
 										enum = (i * 5)
 										embeddata = get_detailed_output(search_res[enum]['link'])
-										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'], url = embeddata['url'])
+										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
 										await response.edit(embed=embed)
 										await response.clear_reactions()
 										break
 									if (str(reaction) == '🇧'):
 										enum = (i * 5) + 1
 										embeddata = get_detailed_output(search_res[enum]['link'])
-										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'], url = embeddata['url'])
+										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
 										await response.edit(embed=embed)
 										await response.clear_reactions()
 										break
 									if (str(reaction) == '🇨'):
 										enum = (i * 5) + 2
 										embeddata = get_detailed_output(search_res[enum]['link'])
-										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'], url = embeddata['url'])
+										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
 										await response.edit(embed=embed)
 										await response.clear_reactions()
 										break
 									if (str(reaction) == '🇩'):
 										enum = (i * 5) + 3
 										embeddata = get_detailed_output(search_res[enum]['link'])
-										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'], url = embeddata['url'])
+										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
 										await response.edit(embed=embed)
 										await response.clear_reactions()
 										break
 									if (str(reaction) == '🇪'):
 										enum = (i * 5) + 4
 										embeddata = get_detailed_output(search_res[enum]['link'])
-										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'], url = embeddata['url'])
+										embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
 										await response.edit(embed=embed)
 										await response.clear_reactions()
 										break
