@@ -129,7 +129,7 @@ def extract_desc (raw_soup):
 			raw_desc.pop(0)
 			desc += ACTIONS[buff.get("alt")]
 		if (raw_desc[0].name is None):
-			desc += str(raw_desc.pop(0))
+			desc += ' '
 	print (desc)
 	description['desc'] = desc
 	for trait in traits:
