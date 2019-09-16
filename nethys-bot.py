@@ -108,6 +108,7 @@ def extract_desc (raw_soup):
 		description['title'] += " (" + level.get_text() + ")"
 	desc = ""
 	traits = []
+
 	while ((len(raw_desc) > 0) and (raw_desc[0].name != "h1") and (raw_desc[0].name != "h2") and (raw_desc[0].name != "h3")):
 		buff = raw_desc.pop(0)
 		if (buff.name == "a" or buff.name == "u"):
@@ -130,6 +131,7 @@ def extract_desc (raw_soup):
 			desc += ACTIONS[buff.get("alt")]
 		if (raw_desc[0].name is None):
 			desc += ' '
+		print (raw_desc)
 		print (desc)
 	description['desc'] = desc
 	for trait in traits:
