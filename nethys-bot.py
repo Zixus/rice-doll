@@ -131,8 +131,7 @@ def extract_desc (raw_soup):
 		elif (buff.name == "img" and buff.get("alt") is not None):
 			raw_desc.pop(0)
 			desc += ACTIONS[buff.get("alt")]
-		elif (raw_desc[0].name is None):
-			raw_desc.pop(0)
+		elif (buff.name is None):
 			desc += buff
 	description['desc'] = desc
 	for trait in traits:
