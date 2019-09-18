@@ -66,7 +66,7 @@ NUMBERING = {
 SELECTION_EMOJI = ['🇦', '🇧', '🇨', '🇩', '🇪']
 
 def extract_tag_by_id (text, tag_id):
-	soup = BeautifulSoup(text)
+	soup = BeautifulSoup(text, features="html.parser")
 	res = soup.find(id=tag_id)
 	return res
 
