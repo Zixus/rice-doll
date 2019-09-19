@@ -232,7 +232,7 @@ class NethysClient(discord.Client):
 									try:
 										search_index = int(msg.content)-1
 										embed_data = get_detailed_output(search_res[search_index]['link'])
-										embed = discord.Embed(title = search_res[int(msg.content)]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
+										embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
 										await response.delete()
 										try:
 											await msg.delete()
