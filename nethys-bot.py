@@ -172,7 +172,7 @@ class NethysClient(discord.Client):
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
-		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
+		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenance"))
 		# await client.change_presence(activity=discord.Game("?help"))
 
 
@@ -279,7 +279,6 @@ class NethysClient(discord.Client):
 					else:
 						await message.channel.send("Cannot find " + arg + " in " + command)
 			else:
-				# await message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
-				await message.channel.send(embed=discord.Embed(description= "Not a command."))
+				await message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
 client = NethysClient()
 client.run(TOKEN)
