@@ -187,7 +187,10 @@ class NethysClient(discord.Client):
 					await message.channel.send(embed=discord.Embed(title="Command List",description=help_text))
 				else:
 					arg = command_line[1:]
-					search_res = get_search_output(command, arg)
+					search = ""
+					for word in arg:
+						search += word
+					search_res = get_search_output(command, search)
 					if (len(search_res) > 0):
 						embeds = make_embed_pages(search_res, command, 10)
 						response = await message.channel.send(embed=embeds[0])
