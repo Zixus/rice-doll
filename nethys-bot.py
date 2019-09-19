@@ -196,7 +196,7 @@ class NethysClient(discord.Client):
 						response = await message.channel.send(embed=embeds[0])
 
 						def check(msg):
-							return user == msg.author
+							return message.user == msg.author
 
 						i = 0
 
