@@ -156,6 +156,9 @@ def make_embed_pages(search_res, category, items_per_page):
 	if (len(search_res) % items_per_page != 0):
 		max_page += 1
 	embed_pages = []
+	find_category = category
+	if (find_category == "find"):
+		find_category = "all categories"
 	buff = ""
 	i = 0
 	while (i < len(search_res)):
@@ -165,7 +168,7 @@ def make_embed_pages(search_res, category, items_per_page):
 			page_num = int(i / items_per_page)
 			if (i == len(search_res)):
 				page_num = max_page
-			embed_pages.append(discord.Embed(title = "Search Result in `" + category + "`", description = buff + "\n\nPage " + str(page_num) + "/" + str(max_page)).set_footer(text = "(Type `<` or `>` to navigate between pages)"))
+			embed_pages.append(discord.Embed(title = "Search Result in `" + category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "(Type `<` or `>` to navigate between pages)"))
 			buff = ""
 	return (embed_pages)
 
@@ -174,8 +177,8 @@ class NethysClient(discord.Client):
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
-		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
-		# await client.change_presence(activity=discord.Game("?help"))
+		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
+		await client.change_presence(activity=discord.Game("?help"))
 
 
 	async def on_message(self, message):
