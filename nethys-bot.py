@@ -157,7 +157,7 @@ def make_embed_pages(search_res, category, items_per_page):
 	buff = ""
 	i = 0
 	while (i < len(search_res)):
-		buff += str(i) + ". " + search_res[i]['title'] + "\n"
+		buff += str(i+1) + ". " + search_res[i]['title'] + "\n"
 		i += 1
 		if (((i % items_per_page) == 0) or (i == len(search_res))):
 			page_num = int(i / items_per_page)
@@ -196,7 +196,7 @@ class NethysClient(discord.Client):
 						response = await message.channel.send(embed=embeds[0])
 
 						def check(msg):
-							return message.user == msg.author
+							return message.author == msg.author
 
 						i = 0
 
@@ -220,7 +220,7 @@ class NethysClient(discord.Client):
 										response = await channel.send(embed=embeds[i])
 									else:
 										try:
-											search_index = int(msg.content)
+											search_index = int(msg.content)-1
 											embed_data = get_detailed_output(search_res[search_index]['link'])
 											embed = discord.Embed(title = search_res[int(msg.content)]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
 											await response.delete()
