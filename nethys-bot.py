@@ -204,7 +204,7 @@ class NethysClient(discord.Client):
 							try:
 								msg = await self.wait_for("message", timeout=15, check=check)
 							except asyncio.TimeoutError:
-								await response.edit(embed="Search timed out")
+								await response.edit(embed=discord.Embed(description="Search timed out"))
 								break
 							else:
 								try:
@@ -226,7 +226,7 @@ class NethysClient(discord.Client):
 											await response.delete()
 											await channel.send(embed=embed)
 											break
-										except ValueError:
+										except (ValueError, IndexError) as e:
 											continue
 								except discord.Forbidden:
 									pass
