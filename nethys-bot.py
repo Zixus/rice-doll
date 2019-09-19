@@ -27,6 +27,7 @@ CATEGORIES = {
 	'setting': '11',
 	'skill': '12',
 	'spell': '13',
+	'find' : '0=on&ctl00%24MainContent%24TableList%241=on&ctl00%24MainContent%24TableList%242=on&ctl00%24MainContent%24TableList%243=on&ctl00%24MainContent%24TableList%244=on&ctl00%24MainContent%24TableList%245=on&ctl00%24MainContent%24TableList%246=on&ctl00%24MainContent%24TableList%247=on&ctl00%24MainContent%24TableList%248=on&ctl00%24MainContent%24TableList%249=on&ctl00%24MainContent%24TableList%2410=on&ctl00%24MainContent%24TableList%2411=on&ctl00%24MainContent%24TableList%2412=on&ctl00%24MainContent%24TableList%2413'
 }
 
 ACTIONS = {
@@ -52,6 +53,7 @@ COMMANDS = [
 	'setting',
 	'skill',
 	'spell',
+	'find',
 	'help'
 ]
 
@@ -237,13 +239,6 @@ class NethysClient(discord.Client):
 										break
 									except (ValueError, IndexError) as e:
 										continue
-								
-
-
-
-
-
-
 
 						# if (len(search_res) < 5):
 						# 	i = 0
