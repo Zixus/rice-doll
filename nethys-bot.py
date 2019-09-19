@@ -207,29 +207,37 @@ class NethysClient(discord.Client):
 								await response.edit(embed=discord.Embed(description="Search timed out"))
 								break
 							else:
-								try:
-									if ((msg.content == "<") and (i > 0)):
-										await response.delete()
+								if ((msg.content == "<") and (i > 0)):
+									await response.delete()
+									try:
 										await msg.delete()
-										i -= 1
-										response = await channel.send(embed=embeds[i])
-									elif ((msg.content == ">") and (i < len(embeds)-1)):
-										await response.delete()
+									except discord.Forbidden:
+										pass
+									i -= 1
+									response = await channel.send(embed=embeds[i])
+								elif ((msg.content == ">") and (i < len(embeds)-1)):
+									await response.delete()
+									try:
 										await msg.delete()
-										i += 1
-										response = await channel.send(embed=embeds[i])
-									else:
+									except discord.Forbidden:
+										pass
+									i += 1
+									response = await channel.send(embed=embeds[i])
+								else:
+									try:
+										search_index = int(msg.content)-1
+										embed_data = get_detailed_output(search_res[search_index]['link'])
+										embed = discord.Embed(title = search_res[int(msg.content)]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
+										await response.delete()
 										try:
-											search_index = int(msg.content)-1
-											embed_data = get_detailed_output(search_res[search_index]['link'])
-											embed = discord.Embed(title = search_res[int(msg.content)]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
-											await response.delete()
-											await channel.send(embed=embed)
-											break
-										except (ValueError, IndexError) as e:
-											continue
-								except discord.Forbidden:
-									pass
+											await msg.delete()
+										except discord.Forbidden:
+											pass
+										await channel.send(embed=embed)
+										break
+									except (ValueError, IndexError) as e:
+										continue
+								
 
 
 
