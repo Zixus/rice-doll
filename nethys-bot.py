@@ -187,11 +187,11 @@ class NethysClient(discord.Client):
 				if (command == "help"):
 					help_text = "**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?help**"
 					await message.channel.send(embed=discord.Embed(title="Command List",description=help_text))
-				else:
+				elif (len(command_line) > 1):
 					arg = command_line[1:]
-					search = ""
-					for word in arg:
-						search += word
+					search = arg.pop(0)
+					while (len(arg) > 0):
+						search += " " + arg.pop(0)
 					search_res = get_search_output(command, search)
 					if (len(search_res) > 0):
 						embeds = make_embed_pages(search_res, command, 10)
@@ -325,7 +325,7 @@ class NethysClient(discord.Client):
 						# 			await response.clear_reactions()
 						# 			break
 					else:
-						await message.channel.send("Cannot find " + arg + " in " + command)
+						await channel.send("Cannot find " + search + " in " + command)
 			elif (len(message.content) > 1):
 				await message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
 client = NethysClient()
