@@ -168,7 +168,7 @@ def make_embed_pages(search_res, category, items_per_page):
 			page_num = int(i / items_per_page)
 			if (i == len(search_res)):
 				page_num = max_page
-			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "(Type `<` or `>` to navigate between pages); Type the number to select"))
+			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "Type `<` or `>` to navigate between pages; Type the number to select"))
 			buff = ""
 	return (embed_pages)
 
