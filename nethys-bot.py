@@ -197,8 +197,9 @@ class NethysClient(discord.Client):
 						search += " " + arg.pop(0)
 					search_res = get_search_output(command, search)
 					if (len(search_res) > 0):
-						embeds = make_embed_pages(search_res, command, 10)
-						response = await message.channel.send(embed=embeds[0])
+						async with channel.typing():
+							embeds = make_embed_pages(search_res, command, 10)
+							response = await channel.send(embed=embeds[0])
 
 						def check(msg):
 							return message.author == msg.author
