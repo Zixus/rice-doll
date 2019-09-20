@@ -168,7 +168,7 @@ def make_embed_pages(search_res, category, items_per_page):
 			page_num = int(i / items_per_page)
 			if (i == len(search_res)):
 				page_num = max_page
-			embed_pages.append(discord.Embed(title = "Search Result in `" + category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "(Type `<` or `>` to navigate between pages)"))
+			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "(Type `<` or `>` to navigate between pages); Type the number to select"))
 			buff = ""
 	return (embed_pages)
 
@@ -242,91 +242,6 @@ class NethysClient(discord.Client):
 										break
 									except (ValueError, IndexError) as e:
 										continue
-
-						# if (len(search_res) < 5):
-						# 	i = 0
-						# 	while (i < len(search_res)) :
-						# 		await response.add_reaction(SELECTION_EMOJI[i])
-						# 		i += 1
-						# else:
-						# 	await response.add_reaction('◀')
-						# 	await response.add_reaction('▶')
-						# 	i = 0
-						# 	while (i < 5) :
-						# 		await response.add_reaction(SELECTION_EMOJI[i])
-						# 		i += 1
-
-						# i = 0
-
-						# def check(reaction, user):
-						# 	return user == message.author
-
-						# while (True):
-						# 	try:
-						# 		reaction, user = await self.wait_for("reaction_add", timeout=15, check=check)
-						# 	except asyncio.TimeoutError:
-						# 		await response.clear_reactions()
-						# 		break
-						# 	else:
-						# 		try:
-						# 			if (str(reaction) == '◀'):
-						# 				if (i > 0):
-						# 					if (i == len(embeds)-1 and len(search_res) % 5 != 0):
-						# 						j = len(search_res) % 5
-						# 						while (j < 5):
-						# 							await response.add_reaction(SELECTION_EMOJI[j])
-						# 							j += 1
-						# 					i -= 1
-						# 					await response.edit(embed=embeds[i])
-						# 				await response.remove_reaction('◀', user)
-						# 			if (str(reaction) == '▶'):
-						# 				if (i < len(embeds)-1):
-						# 					i += 1
-						# 					if (i == len(embeds)-1 and len(search_res) % 5 != 0):
-						# 						j = 5
-						# 						while (j > len(search_res) % 5):
-						# 							j -= 1
-						# 							await response.remove_reaction(SELECTION_EMOJI[j], self.user)
-						# 					await response.edit(embed=embeds[i])
-						# 				await response.remove_reaction('▶', user)
-						# 			if (str(reaction) == '🇦'):
-						# 				enum = (i * 5)
-						# 				embeddata = get_detailed_output(search_res[enum]['link'])
-						# 				embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
-						# 				await response.edit(embed=embed)
-						# 				await response.clear_reactions()
-						# 				break
-						# 			if (str(reaction) == '🇧'):
-						# 				enum = (i * 5) + 1
-						# 				embeddata = get_detailed_output(search_res[enum]['link'])
-						# 				embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
-						# 				await response.edit(embed=embed)
-						# 				await response.clear_reactions()
-						# 				break
-						# 			if (str(reaction) == '🇨'):
-						# 				enum = (i * 5) + 2
-						# 				embeddata = get_detailed_output(search_res[enum]['link'])
-						# 				embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
-						# 				await response.edit(embed=embed)
-						# 				await response.clear_reactions()
-						# 				break
-						# 			if (str(reaction) == '🇩'):
-						# 				enum = (i * 5) + 3
-						# 				embeddata = get_detailed_output(search_res[enum]['link'])
-						# 				embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
-						# 				await response.edit(embed=embed)
-						# 				await response.clear_reactions()
-						# 				break
-						# 			if (str(reaction) == '🇪'):
-						# 				enum = (i * 5) + 4
-						# 				embeddata = get_detailed_output(search_res[enum]['link'])
-						# 				embed = discord.Embed(title = search_res[enum]['title'] + embeddata['title'], description= embeddata['desc'][0:2000], url = embeddata['url'])
-						# 				await response.edit(embed=embed)
-						# 				await response.clear_reactions()
-						# 				break
-						# 		except IndexError :
-						# 			await response.clear_reactions()
-						# 			break
 					else:
 						await channel.send("Cannot find " + search + " in " + command)
 			elif (len(message.content) > 1):
