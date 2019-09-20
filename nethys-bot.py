@@ -195,7 +195,8 @@ class NethysClient(discord.Client):
 					search = arg.pop(0)
 					while (len(arg) > 0):
 						search += " " + arg.pop(0)
-					search_res = get_search_output(command, search)
+					async with channel.typing():
+						search_res = get_search_output(command, search)
 					if (len(search_res) > 0):
 						async with channel.typing():
 							embeds = make_embed_pages(search_res, command, 10)
