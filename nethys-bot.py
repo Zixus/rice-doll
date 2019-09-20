@@ -125,9 +125,11 @@ def extract_desc (raw_soup):
 			desc += "\n\n"
 		elif (buff.name == "ul"):
 			i = 0
+			desc += "\n\n"
 			while (i < len(buff.contents)):
 				desc += "- " + buff.contents[i].get_text() + "\n"
 				i += 1
+			desc += "\n"
 		elif (buff.name == "span"):
 			traits.append(buff.get_text())
 		elif (buff.name == "img" and buff.get("alt") is not None):
