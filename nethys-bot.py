@@ -164,7 +164,8 @@ def make_embed_pages(search_res, category, items_per_page):
 	buff = ""
 	i = 0
 	while (i < len(search_res)):
-		buff += str(i+1) + ". " + search_res[i]['title'] + "\n"
+		search_category = 
+		buff += str(i+1) + ". " + search_res[i]['title'] + " (in " + search_res[i]['link'].split(".")[0] + ")\n"
 		i += 1
 		if (((i % items_per_page) == 0) or (i == len(search_res))):
 			page_num = int(i / items_per_page)
