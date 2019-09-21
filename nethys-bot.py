@@ -12,6 +12,17 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
+MESSAGES_IDS_TO_LOG = [624853072992141329]
+
+LOG_DICT = {
+	"624853072992141329" : {
+		"title": "test",
+		"log-channel-id" : 624862967489626123,
+		"log-server-id" : 447398596455694337
+	}
+
+}
+
 CATEGORIES = {
 	'action' : '0',
 	'ancestry': '1',
@@ -182,7 +193,6 @@ class NethysClient(discord.Client):
 		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
 		await client.change_presence(activity=discord.Game("?help"))
 
-
 	async def on_message(self, message):
 		if (message.content.startswith(self.prefix)):
 			channel = message.channel
@@ -249,5 +259,17 @@ class NethysClient(discord.Client):
 						await channel.send("Cannot find " + search + " in " + command)
 			elif (len(message.content) > 1):
 				await message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
+
+	async def on_reaction_add(reaction, user):
+		if reaction.message.id in MESSAGE_IDS_TO_LOG:
+			msg = reaction.message
+			logging_dict = LOG_DICT[msg.id]
+			log_server = discord.Guild()
+			for guild in self.guilds:
+				if (guild.id == logging_dict["log-server-id"]):
+					log_server = guild
+			await msg.channel.send(log_server.name)
+			# log_channel = discord.Channel()
+
 client = NethysClient()
 client.run(TOKEN)
