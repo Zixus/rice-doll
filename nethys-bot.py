@@ -57,6 +57,15 @@ COMMANDS = [
 	'help'
 ]
 
+EMBED_TEXTS = {
+	"help_text" : discord.Embed(title="Command List",description="**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?find** [search key]\n**?help**"),
+	"search_timeout" : discord.Embed(description="Search timed out"),
+	"search_cancel" : discord.Embed(description="Search cancelled"),
+	"embed_page_footer" : "Type '<' or '>' to navigate between pages; Type the number to select; Type 'c' to cancel"
+}
+
+MAX_DESC_CHARS = 2000
+
 def extract_tag_by_id (text, tag_id):
 	soup = BeautifulSoup(text, features="html.parser")
 	res = soup.find(id=tag_id)
@@ -160,17 +169,19 @@ def make_embed_pages(search_res, category, items_per_page):
 			page_num = int(i / items_per_page)
 			if (i == len(search_res)):
 				page_num = max_page
-			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = "Type `<` or `>` to navigate between pages; Type the number to select"))
+			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = EMBED_TEXTS["embed_page_footer"]))
 			buff = ""
 	return (embed_pages)
 
 class NethysClient(discord.Client):
 	prefix = "?"
+	search_timeout = 15
+	max_item_in_embed_page = 10
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
-		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
-		await client.change_presence(activity=discord.Game("?help"))
+		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
+		# await client.change_presence(activity=discord.Game("?help"))
 
 	async def on_message(self, message):
 		if (message.content.startswith(self.prefix)):
@@ -179,8 +190,7 @@ class NethysClient(discord.Client):
 			command = command_line[0][1:]
 			if (command in COMMANDS):
 				if (command == "help"):
-					help_text = "**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?find** [search key]\n**?help**"
-					await message.channel.send(embed=discord.Embed(title="Command List",description=help_text))
+					await message.channel.send(embed=EMBED_TEXTS["help_text"])
 				elif (len(command_line) > 1):
 					arg = command_line[1:]
 					search = arg.pop(0)
@@ -189,19 +199,18 @@ class NethysClient(discord.Client):
 					async with channel.typing():
 						search_res = get_search_output(command, search)
 					if (len(search_res) > 0):
-						embeds = make_embed_pages(search_res, command, 10)
+						embeds = make_embed_pages(search_res, command, self.max_item_in_embed_page)
 						response = await channel.send(embed=embeds[0])
 
 						def check(msg):
 							return message.author == msg.author
-
 						i = 0
 
 						while (True):
 							try:
-								msg = await self.wait_for("message", timeout=15, check=check)
+								msg = await self.wait_for("message", timeout=search_timeout, check=check)
 							except asyncio.TimeoutError:
-								await response.edit(embed=discord.Embed(description="Search timed out"))
+								await response.edit(embed=EMBED_TEXTS["search_timeout"])
 								break
 							else:
 								if ((msg.content == "<") and (i > 0)):
@@ -220,11 +229,21 @@ class NethysClient(discord.Client):
 										pass
 									i += 1
 									response = await channel.send(embed=embeds[i])
+								elif (msg.content == "c"):
+									await response.edit(embed=EMBED_TEXTS["search_cancel"])
+									break
+								# elif (msg.content.startswith("p")):
+								# 	try:
+								# 		page_index = int(msg.content[1:])
+
+
+								# 	except (ValueError, IndexError) as e:
+								# 		continue
 								else:
 									try:
 										search_index = int(msg.content)-1
 										embed_data = get_detailed_output(search_res[search_index]['link'])
-										embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:2000], url = embed_data['url'])
+										embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:MAX_DESC_CHARS], url = embed_data['url'])
 										await response.delete()
 										try:
 											await msg.delete()
@@ -236,7 +255,5 @@ class NethysClient(discord.Client):
 										continue
 					else:
 						await channel.send("Cannot find " + search + " in " + command)
-			elif (len(message.content) > 1):
-				await message.channel.send(embed=discord.Embed(description= "Not a command. Type ?help to list available commands."))
 client = NethysClient()
 client.run(TOKEN)
