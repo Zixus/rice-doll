@@ -173,6 +173,12 @@ def make_embed_pages(search_res, category, items_per_page):
 			buff = ""
 	return (embed_pages)
 
+def delete_message(msg):
+	try:
+		await msg.delete()
+	except discord.Forbidden:
+		pass
+
 class NethysClient(discord.Client):
 	prefix = "?"
 	search_timeout = 15
@@ -215,26 +221,17 @@ class NethysClient(discord.Client):
 							else:
 								if ((msg.content == "<") and (i > 0)):
 									await response.delete()
-									try:
-										await msg.delete()
-									except discord.Forbidden:
-										pass
 									i -= 1
 									response = await channel.send(embed=embeds[i])
+									delete_message(msg)
 								elif ((msg.content == ">") and (i < len(embeds)-1)):
 									await response.delete()
-									try:
-										await msg.delete()
-									except discord.Forbidden:
-										pass
 									i += 1
 									response = await channel.send(embed=embeds[i])
+									delete_message(msg)
 								elif (msg.content == "c"):
 									await response.edit(embed=EMBED_TEXTS["search_cancel"])
-									try:
-										await msg.delete()
-									except discord.Forbidden:
-										pass
+									delete_message(msg)
 									break
 								elif (msg.content.startswith("p")):
 									temp = i
@@ -246,12 +243,10 @@ class NethysClient(discord.Client):
 										try:
 											await response.delete()
 											response = await channel.send(embed=embeds[i])
-											await msg.delete()
+											delete_message(msg)
 										except IndexError:
 											i = temp
 											continue
-										except discord.Forbidden:
-											pass
 								else:
 									try:
 										search_index = int(msg.content)-1
@@ -259,10 +254,7 @@ class NethysClient(discord.Client):
 											embed_data = get_detailed_output(search_res[search_index]['link'])
 											embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:MAX_DESC_CHARS], url = embed_data['url'])
 										await response.delete()
-										try:
-											await msg.delete()
-										except discord.Forbidden:
-											pass
+										delete_message(msg)
 										await channel.send(embed=embed)
 										break
 									except (ValueError, IndexError) as e:
