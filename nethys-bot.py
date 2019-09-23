@@ -58,7 +58,7 @@ COMMANDS = [
 ]
 
 EMBED_TEXTS = {
-	"help_text" : discord.Embed(title="Command List",description="**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?find** [search key]\n**?help**"),
+	"help_text" : discord.Embed(title="Command List", description="**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?find** [search key]\n**?help**"),
 	"search_timeout" : discord.Embed(description="Search timed out"),
 	"search_cancel" : discord.Embed(description="Search cancelled"),
 	"embed_page_footer" : "Type '<' or '>' to navigate between pages; Type the number to select; Type 'c' to cancel"
@@ -208,7 +208,7 @@ class NethysClient(discord.Client):
 
 						while (True):
 							try:
-								msg = await self.wait_for("message", timeout=search_timeout, check=check)
+								msg = await self.wait_for("message", timeout=self.search_timeout, check=check)
 							except asyncio.TimeoutError:
 								await response.edit(embed=EMBED_TEXTS["search_timeout"])
 								break
