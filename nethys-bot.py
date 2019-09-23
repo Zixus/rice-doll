@@ -258,6 +258,6 @@ class NethysClient(discord.Client):
 									except (ValueError, IndexError) as e:
 										continue
 					else:
-						await channel.send("Cannot find " + search + " in " + command)
+						await channel.send(embed==discord.Embed(description="Cannot find " + search + " in " + command))
 client = NethysClient()
 client.run(TOKEN)
