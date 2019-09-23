@@ -244,6 +244,7 @@ class NethysClient(discord.Client):
 										continue
 									else:
 										try:
+											await response.delete()
 											response = await channel.send(embed=embeds[i])
 											await msg.delete()
 										except IndexError:
