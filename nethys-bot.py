@@ -173,11 +173,7 @@ def make_embed_pages(search_res, category, items_per_page):
 			buff = ""
 	return (embed_pages)
 
-def delete_message(msg):
-	try:
-		await msg.delete()
-	except discord.Forbidden:
-		pass
+
 
 class NethysClient(discord.Client):
 	prefix = "?"
@@ -210,6 +206,11 @@ class NethysClient(discord.Client):
 
 						def check(msg):
 							return message.author == msg.author
+						def delete_message(msg):
+							try:
+								await msg.delete()
+							except discord.Forbidden:
+								pass
 						i = 0
 
 						while (True):
