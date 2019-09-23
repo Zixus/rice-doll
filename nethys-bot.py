@@ -239,7 +239,7 @@ class NethysClient(discord.Client):
 								elif (msg.content.startswith("p")):
 									temp = i
 									try:
-										i = int(msg.content[1:])
+										i = int(msg.content[1:])-1
 									except (ValueError, IndexError) as e:
 										continue
 									else:
