@@ -61,7 +61,7 @@ EMBED_TEXTS = {
 	"help_text" : discord.Embed(title="Command List", description="**?action** [search key]\n**?ancestry** [search key]\n**?background** [search key]\n**?class** [search key]\n**?condition** [search key]\n**?equipment** [search key]\n**?feat** [search key]\n**?hazard** [search key]\n**?monster** [search key]\n**?ritual** [search key]\n**?rule** [search key]\n**?setting** [search key]\n**?skill** [search key]\n**?spell** [search key]\n**?find** [search key]\n**?help**"),
 	"search_timeout" : discord.Embed(description="Search timed out"),
 	"search_cancel" : discord.Embed(description="Search cancelled"),
-	"embed_page_footer" : "Type '<' or '>' to navigate between pages; Type the number to select; Type 'c' to cancel"
+	"embed_page_footer" : "Type '<' or '>' to navigate between pages; Type 'p[number]' to jump between pages; Type the number to select; Type 'c' to cancel"
 }
 
 MAX_DESC_CHARS = 2000
@@ -236,13 +236,21 @@ class NethysClient(discord.Client):
 									except discord.Forbidden:
 										pass
 									break
-								# elif (msg.content.startswith("p")):
-								# 	try:
-								# 		page_index = int(msg.content[1:])
-
-
-								# 	except (ValueError, IndexError) as e:
-								# 		continue
+								elif (msg.content.startswith("p")):
+									temp = i
+									try:
+										i = int(msg.content[1:])
+									except (ValueError, IndexError) as e:
+										continue
+									else:
+										try:
+											response = await channel.send(embed=embeds[i])
+											await msg.delete()
+										except IndexError:
+											i = temp
+											continue
+										except discord.Forbidden:
+											pass
 								else:
 									try:
 										search_index = int(msg.content)-1
