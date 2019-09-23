@@ -27,7 +27,7 @@ CATEGORIES = {
 	'setting': '11',
 	'skill': '12',
 	'spell': '13',
-	'find' : '0=on&ctl00%24MainContent%24TableList%241=on&ctl00%24MainContent%24TableList%242=on&ctl00%24MainContent%24TableList%243=on&ctl00%24MainContent%24TableList%244=on&ctl00%24MainContent%24TableList%245=on&ctl00%24MainContent%24TableList%246=on&ctl00%24MainContent%24TableList%247=on&ctl00%24MainContent%24TableList%248=on&ctl00%24MainContent%24TableList%249=on&ctl00%24MainContent%24TableList%2410=on&ctl00%24MainContent%24TableList%2411=on&ctl00%24MainContent%24TableList%2412=on&ctl00%24MainContent%24TableList%2413'
+	'all categories' : '0=on&ctl00%24MainContent%24TableList%241=on&ctl00%24MainContent%24TableList%242=on&ctl00%24MainContent%24TableList%243=on&ctl00%24MainContent%24TableList%244=on&ctl00%24MainContent%24TableList%245=on&ctl00%24MainContent%24TableList%246=on&ctl00%24MainContent%24TableList%247=on&ctl00%24MainContent%24TableList%248=on&ctl00%24MainContent%24TableList%249=on&ctl00%24MainContent%24TableList%2410=on&ctl00%24MainContent%24TableList%2411=on&ctl00%24MainContent%24TableList%2412=on&ctl00%24MainContent%24TableList%2413'
 }
 
 ACTIONS = {
@@ -157,9 +157,6 @@ def make_embed_pages(search_res, category, items_per_page):
 	if (len(search_res) % items_per_page != 0):
 		max_page += 1
 	embed_pages = []
-	find_category = category
-	if (find_category == "find"):
-		find_category = "all categories"
 	buff = ""
 	i = 0
 	while (i < len(search_res)):
@@ -169,7 +166,7 @@ def make_embed_pages(search_res, category, items_per_page):
 			page_num = int(i / items_per_page)
 			if (i == len(search_res)):
 				page_num = max_page
-			embed_pages.append(discord.Embed(title = "Search Result in `" + find_category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = EMBED_TEXTS["embed_page_footer"]))
+			embed_pages.append(discord.Embed(title = "Search Result in `" + category + "` (" + "Page " + str(page_num) + "/" + str(max_page) + ")", description = buff ).set_footer(text = EMBED_TEXTS["embed_page_footer"]))
 			buff = ""
 	return (embed_pages)
 
@@ -198,6 +195,8 @@ class NethysClient(discord.Client):
 				if (command == "help"):
 					await message.channel.send(embed=EMBED_TEXTS["help_text"])
 				elif (len(command_line) > 1):
+					if (command == "find"):
+						command = "all categories"
 					arg = command_line[1:]
 					search = arg.pop(0)
 					while (len(arg) > 0):
