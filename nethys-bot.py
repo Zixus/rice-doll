@@ -186,8 +186,8 @@ class NethysClient(discord.Client):
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
-		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
-		# await client.change_presence(activity=discord.Game("?help"))
+		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
+		await client.change_presence(activity=discord.Game("?help"))
 
 	async def on_message(self, message):
 		if (message.content.startswith(self.prefix)):
