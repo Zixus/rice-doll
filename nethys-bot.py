@@ -260,5 +260,7 @@ class NethysClient(discord.Client):
 										continue
 					else:
 						await channel.send(embed=discord.Embed(description="Cannot find `" + search + "` in `" + command + "`"))
+		elif (discord.utils.get(message.mentions, id=self.id) is not None):
+			await channel.send("<:jii:599625811380797500>")
 client = NethysClient()
 client.run(TOKEN)
