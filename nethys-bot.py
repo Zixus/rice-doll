@@ -255,8 +255,9 @@ class NethysClient(discord.Client):
 								else:
 									try:
 										search_index = int(msg.content)-1
-										embed_data = get_detailed_output(search_res[search_index]['link'])
-										embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:MAX_DESC_CHARS], url = embed_data['url'])
+										async with channel.typing():
+											embed_data = get_detailed_output(search_res[search_index]['link'])
+											embed = discord.Embed(title = search_res[search_index]['title'] + embed_data['title'], description= embed_data['desc'][0:MAX_DESC_CHARS], url = embed_data['url'])
 										await response.delete()
 										try:
 											await msg.delete()
