@@ -231,6 +231,10 @@ class NethysClient(discord.Client):
 									response = await channel.send(embed=embeds[i])
 								elif (msg.content == "c"):
 									await response.edit(embed=EMBED_TEXTS["search_cancel"])
+									try:
+										await msg.delete()
+									except discord.Forbidden:
+										pass
 									break
 								# elif (msg.content.startswith("p")):
 								# 	try:
