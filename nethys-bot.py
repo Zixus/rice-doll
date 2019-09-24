@@ -228,11 +228,11 @@ class NethysClient(discord.Client):
 									i += 1
 									response = await channel.send(embed=embeds[i])
 									await delete_message(msg)
-								elif (msg.content == "c"):
+								elif ((msg.content == "c") or (msg.content == "C")):
 									await response.edit(embed=EMBED_TEXTS["search_cancel"])
 									await delete_message(msg)
 									break
-								elif (msg.content.startswith("p")):
+								elif (msg.content.startswith("p") or msg.content.startswith("P")):
 									temp = i
 									try:
 										i = int(msg.content[1:])-1
