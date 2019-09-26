@@ -261,6 +261,6 @@ class NethysClient(discord.Client):
 					else:
 						await channel.send(embed=discord.Embed(description="Cannot find `" + search + "` in `" + command + "`"))
 		elif (message.channel.id == 626777118923030558):
-			await self.get_guild(447398596455694337).get_channel(459699764049477643).send(message.content)
+			await self.get_guild(588654434582790169).get_channel(599588535850237972).send("*peluk <@" + str(self.get_guild(588654434582790169).get_member(209048672195969025)) + ">*")
 client = NethysClient()
 client.run(TOKEN)
