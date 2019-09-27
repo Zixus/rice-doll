@@ -194,7 +194,7 @@ class NethysClient(discord.Client):
 		# await client.change_presence(activity=discord.Game("?help"))
 
 	async def on_message(self, message):
-		if (message.channel == proxy_channel):
+		if (message.channel == self.proxy_channel):
 			if (message.content.startswith(self.prefix + "change-dest")):
 				command_line = message.content.split(" ")
 				dest_guild_id = int(command_line[1])
@@ -204,12 +204,12 @@ class NethysClient(discord.Client):
 			elif (message.content.startswith(self.prefix + "toggle-proxy")):
 				self.is_proxy_active = not self.is_proxy_active
 				await message.add_reaction("✅")
-			elif (is_proxy_active):
+			elif (self.is_proxy_active):
 				await self.dest_channel.send(message.content)
 
-		elif ((message.channel == dest_channel) and is_proxy_active):
+		elif ((message.channel == self.dest_channel) and self.is_proxy_active):
 			await self.proxy_channel.send("`" + str(message.id) + "` " + message.content)
-		
+
 		elif (message.content.startswith(self.prefix)):
 			channel = message.channel
 			command_line = message.content.split(" ")
