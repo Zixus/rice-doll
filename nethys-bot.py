@@ -212,7 +212,8 @@ class NethysClient(discord.Client):
 			await self.proxy_channel.send("`prox " + str(message.id) + "`\n<@" + str(message.author.id) + "> : " + message.content)
 			if (message.author != self):
 				for embedmsg in message.embeds:
-					await self.proxy_channel.send(content="`prox " + str(message.id) + "`\n<@" + str(message.author.id) + "> : " + message.content, embed=embedmsg)
+					if (embedmsg is not None):
+						await self.proxy_channel.send(content="`prox " + str(message.id) + "`\n<@" + str(message.author.id) + "> : " + message.content, embed=embedmsg)
 
 		if (message.content.startswith(self.prefix)):
 			channel = message.channel
