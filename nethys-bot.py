@@ -211,7 +211,7 @@ class NethysClient(discord.Client):
 		elif ((message.channel == self.dest_channel) and self.is_proxy_active):
 			await self.proxy_channel.send("`prox " + str(message.id) + "`\n<@" + str(message.author.id) + "> : " + message.content)
 
-		elif (message.content.startswith(self.prefix)):
+		if (message.content.startswith(self.prefix)):
 			channel = message.channel
 			command_line = message.content.split(" ")
 			command = command_line[0][1:]
