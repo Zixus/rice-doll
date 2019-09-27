@@ -72,8 +72,10 @@ def extract_tag_by_id (text, tag_id):
 	return res
 
 def get_search_output (category, txt_search):
+	results = None
 	s = Session()
 	r = s.get("https://2e.aonprd.com/Search.aspx")
+
 	view_state_value = extract_tag_by_id(r.text, "__VIEWSTATE")['value']
 	view_state = urllib.parse.quote(view_state_value, safe='')
 	view_state_gen_value = extract_tag_by_id(r.text, "__VIEWSTATEGENERATOR")['value']
@@ -180,14 +182,33 @@ class NethysClient(discord.Client):
 	prefix = "?"
 	search_timeout = 15
 	max_item_in_embed_page = 10
+	proxy_channel = None
+	dest_channel = None
+	is_proxy_active = False
 
 	async def on_ready(self):
 		print('Logged on as {0}'.format(self.user))
-		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenances"))
-		await client.change_presence(activity=discord.Game("?help"))
+		self.proxy_channel = self.get_guild(622907155950862357).get_channel(626777118923030558)
+		self.dest_channel = self.get_guild(447398596455694337).get_channel(459699764049477643)
+		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenance Iseng"))
+		# await client.change_presence(activity=discord.Game("?help"))
 
 	async def on_message(self, message):
-		if (message.content.startswith(self.prefix)):
+		if (message.channel == proxy_channel):
+			if (message.content.startswith(self.prefix + "change-dest")):
+				command_line = message.content.split(" ")
+				dest_guild_id = int(command_line[1])
+				dest_channel_id = int(command_line[2])
+				self.dest_channel = self.get_guild(dest_guild_id).get_channel(dest_channel_id)
+				await message.add_reaction("✅")
+			elif (message.content.startswith(self.prefix + "toggle-proxy")):
+				self.is_proxy_active = not self.is_proxy_active
+				await message.add_reaction("✅")
+			elif (is_proxy_active):
+				await self.dest_channel.send(message.content)
+		elif ((message.channel == dest_channel) and is_proxy_active):
+			await self.proxy_channel.send("`" + str(message.id) + "` " + message.content)
+		elif (message.content.startswith(self.prefix)):
 			channel = message.channel
 			command_line = message.content.split(" ")
 			command = command_line[0][1:]
@@ -260,7 +281,5 @@ class NethysClient(discord.Client):
 										continue
 					else:
 						await channel.send(embed=discord.Embed(description="Cannot find `" + search + "` in `" + command + "`"))
-		elif (message.channel.id == 626777118923030558):
-			await self.get_guild(588654434582790169).get_channel(599588084413366295).send(message.content)
 client = NethysClient()
 client.run(TOKEN)
