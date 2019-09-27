@@ -205,11 +205,11 @@ class NethysClient(discord.Client):
 				self.is_proxy_active = not self.is_proxy_active
 				await message.add_reaction("✅")
 			elif (self.is_proxy_active):
-				if (not (message.content.startwith("`" + str(message.id)))):
+				if (not (message.content.startwith("`prox")))):
 					await self.dest_channel.send(message.content)
 
 		elif ((message.channel == self.dest_channel) and self.is_proxy_active):
-			await self.proxy_channel.send("`" + str(message.id) + "` " + message.content)
+			await self.proxy_channel.send("`prox " + str(message.id) + "` " + message.content)
 
 		elif (message.content.startswith(self.prefix)):
 			channel = message.channel
