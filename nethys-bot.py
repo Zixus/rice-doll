@@ -190,8 +190,8 @@ class NethysClient(discord.Client):
 		print('Logged on as {0}'.format(self.user))
 		self.proxy_channel = self.get_guild(622907155950862357).get_channel(626777118923030558)
 		self.dest_channel = self.get_guild(447398596455694337).get_channel(459699764049477643)
-		await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenance Iseng"))
-		# await client.change_presence(activity=discord.Game("?help"))
+		# await client.change_presence(status=discord.Status.idle, activity=discord.Game("Maintenance Iseng"))
+		await client.change_presence(activity=discord.Game("?help"))
 
 	async def on_message(self, message):
 		if (message.channel == self.proxy_channel):
