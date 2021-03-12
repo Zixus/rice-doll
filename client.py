@@ -12,7 +12,6 @@ class GohanClient(discord.Client):
 		await self.change_presence(activity=discord.Game("/help"))
 		print('Logged on as {0}'.format(self.user))
 		
-	# facade to pass the command arguments to corresponding commands
 	async def on_message(self, message):
 		content = "<@{}> : ".format(message.author.id)
 		try:
@@ -29,14 +28,8 @@ class GohanClient(discord.Client):
 			content += "\n" + str(type(e)) + ':\n' + str(e)
 			await message.channel.send(content)
 
-class CommandError(Exception):
-	pass
-
 if __name__ == "__main__":
 	load_dotenv()
 	TOKEN = os.getenv('DISCORD_TOKEN')
-	
 	bot = GohanClient()
 	bot.run(TOKEN)
-
-	
