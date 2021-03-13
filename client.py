@@ -18,7 +18,10 @@ class GohanClient(discord.Client):
 			if (message.content.startswith(self.prefix)):
 				args = message.content[1:].split(" ", 1)
 				if (args[0] == "r") or (args[0] == "roll"):
-					result = d20.roll(args[1])
+					args = args[1].split("#", 1)
+					if len(args) > 1:
+						content += args[1] + " = "
+					result = d20.roll(args[0])
 					content += str(result)
 					await message.channel.send(content)
 				elif (args[0] == "h") or (args[0] == "help"):
