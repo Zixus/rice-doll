@@ -6,10 +6,10 @@ import discord
 import d20
 
 class GohanClient(discord.Client):
-	prefix = "="
+	prefix = "/"
 
 	async def on_ready(self):
-		await self.change_presence(activity=discord.Game("=help"))
+		await self.change_presence(activity=discord.Game(self.prefix + "help"))
 		print('Logged on as {0}'.format(self.user))
 		
 	async def on_message(self, message):
