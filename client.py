@@ -15,7 +15,7 @@ class GohanClient(discord.Client):
 	async def on_message(self, message):
 		content = "<@{}> : ".format(message.author.id)
 		try:
-			if (message.content.startswith(self.prefix)):
+			if (message.content.startswith(self.prefix)) and (not message.author.bot):
 				args = message.content[len(self.prefix):].split(" ", 1)
 				if (args[0] == "r") or (args[0] == "roll"):
 					args = args[1].split("#", 1)
