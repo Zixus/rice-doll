@@ -8,6 +8,7 @@ import d20
 
 class GohanClient(discord.Client):
 	prefix = "/"
+	help_desc = "Usage: `{0}roll <syntax> [#<comments>]` or `{0}r <syntax> [#<comments>]`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax"
 
 	async def on_ready(self):
 		await self.change_presence(activity=discord.Game("{0}help or {0}h".format(self.prefix)))
@@ -28,11 +29,11 @@ class GohanClient(discord.Client):
 					response += str(result)
 					await message.channel.send(response)
 				elif (args[0] == "h") or (args[0] == "help"):
-					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
+					await message.channel.send(embed=discord.Embed(description=self.help_desc.format(self.prefix)))
 
 		except Exception as e:
-			response += "\n" + str(type(e)) + ':\n' + str(e)
-			await message.channel.send(response)
+			response += "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
+			await message.channel.send(embed=discord.Embed(description=response + self.help_desc.format(self.prefix)))
 
 if __name__ == "__main__":
 	load_dotenv()
