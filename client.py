@@ -21,7 +21,7 @@ class GohanClient(discord.Client):
 				args = content.split(" ", 1)
 				if (args[0] == "r") or (args[0] == "roll"):
 					args = args[1].split("#", 1)
-					args[0] = re.sub(" +", " ", args[0])
+					args[0] = re.sub(" +", "", args[0])
 					if len(args) > 1:
 						response += args[1] + " = "
 					result = d20.roll(args[0])
