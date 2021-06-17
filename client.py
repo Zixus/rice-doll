@@ -1,4 +1,5 @@
 import os
+import re
 import asyncio
 from dotenv import load_dotenv
 
@@ -21,11 +22,11 @@ class GohanClient(discord.Client):
 					args = args[1].split("#", 1)
 					if len(args) > 1:
 						content += args[1] + " = "
-					result = d20.roll(args[0])
+					result = d20.roll(re.sub(" +", " ", args[0]))
 					content += str(result)
 					await message.channel.send(content)
 				elif (args[0] == "h") or (args[0] == "help"):
-					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\n Refer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
+					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
 
 		except Exception as e:
 			content += "\n" + str(type(e)) + ':\n' + str(e)
