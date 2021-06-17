@@ -20,8 +20,8 @@ class GohanClient(discord.Client):
 				content = message.content[len(self.prefix):]
 				args = content.split(" ", 1)
 				if (args[0] == "r") or (args[0] == "roll"):
-					args = args[1].split("#", 1)
-					args[0] = re.sub(" +", "", args[0])
+					args = content.split("#", 1) #args[0] as roller string, args[1] as comment
+					args[0] = re.sub(" +", " ", args[0]).replace("r ", 1).replace("roll ", 1)
 					if len(args) > 1:
 						response += args[1] + " = "
 					result = d20.roll(args[0])
@@ -31,8 +31,8 @@ class GohanClient(discord.Client):
 					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
 
 		except Exception as e:
-			content += "\n" + str(type(e)) + ':\n' + str(e)
-			await message.channel.send(content)
+			response += "\n" + str(type(e)) + ':\n' + str(e)
+			await message.channel.send(response)
 
 if __name__ == "__main__":
 	load_dotenv()
