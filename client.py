@@ -9,7 +9,7 @@ class GohanClient(discord.Client):
 	prefix = "/"
 
 	async def on_ready(self):
-		await self.change_presence(activity=discord.Game(self.prefix + "help"))
+		await self.change_presence(activity=discord.Game("{0}help or {0}h".format(self.prefix)))
 		print('Logged on as {0}'.format(self.user))
 		
 	async def on_message(self, message):
@@ -25,7 +25,7 @@ class GohanClient(discord.Client):
 					content += str(result)
 					await message.channel.send(content)
 				elif (args[0] == "h") or (args[0] == "help"):
-					await message.channel.send(embed=discord.Embed(description="Usage: `r!roll <syntax>` or `r!r <syntax>`\n Refer to https://pypi.org/project/d20/ for the rolling syntax"))
+					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\n Refer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
 
 		except Exception as e:
 			content += "\n" + str(type(e)) + ':\n' + str(e)
