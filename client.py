@@ -14,17 +14,19 @@ class GohanClient(discord.Client):
 		print('Logged on as {0}'.format(self.user))
 		
 	async def on_message(self, message):
-		content = "<@{}> : ".format(message.author.id)
+		response = "<@{}> : ".format(message.author.id)
 		try:
 			if (message.content.startswith(self.prefix)) and (not message.author.bot):
-				args = message.content[len(self.prefix):].split(" ", 1)
+				content = message.content[len(self.prefix):]
+				args = content.split(" ", 1)
 				if (args[0] == "r") or (args[0] == "roll"):
 					args = args[1].split("#", 1)
+					args[0] = re.sub(" +", " ", args[0])
 					if len(args) > 1:
-						content += args[1] + " = "
-					result = d20.roll(re.sub(" +", " ", args[0]))
-					content += str(result)
-					await message.channel.send(content)
+						response += args[1] + " = "
+					result = d20.roll(args[0])
+					response += str(result)
+					await message.channel.send(response)
 				elif (args[0] == "h") or (args[0] == "help"):
 					await message.channel.send(embed=discord.Embed(description="Usage: `{0}roll <syntax>` or `{0}r <syntax>`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax".format(self.prefix)))
 
