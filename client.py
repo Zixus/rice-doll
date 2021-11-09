@@ -8,7 +8,7 @@ import d20
 
 class GohanClient(discord.Client):
 	prefix = "/"
-	help_desc = "Usage: `{0}roll <syntax> [#<comments>]` or `{0}r <syntax> [#<comments>]`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax\nTest trigger push"
+	help_desc = "Usage: `{0}roll <syntax> [#<comments>]` or `{0}r <syntax> [#<comments>]`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax"
 
 	async def on_ready(self):
 		await self.change_presence(activity=discord.Game("{0}help or {0}h".format(self.prefix)))
