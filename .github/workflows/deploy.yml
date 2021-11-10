@@ -1,0 +1,31 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy rice-doll bot
+        uses: appleboy/ssh-action@v0.1.4 #SSH to VPS
+        with:
+          host: ${{VPS.SSH_HOST}}
+          username: ${{VPS.SSH_USERNAME}}
+          password: ${{VPS.SSH_PASSWORD}}
+          
+          script: | #Script to run after SSH-ing
+            cd bots/rice-doll
+            git pull origin master
+            systemctl stop rice-doll
+            systemctl start rice-doll
+            echo 'rice-doll has been deployed!'
