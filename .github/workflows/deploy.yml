@@ -19,9 +19,9 @@ jobs:
       - name: deploy rice-doll bot
         uses: appleboy/ssh-action@v0.1.4 #SSH to VPS
         with:
-          host: ${{VPS.SSH_HOST}}
-          username: ${{VPS.SSH_USERNAME}}
-          password: ${{VPS.SSH_PASSWORD}}
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          password: ${{secrets.SSH_PASSWORD}}
           
           script: | #Script to run after SSH-ing
             cd bots/rice-doll
