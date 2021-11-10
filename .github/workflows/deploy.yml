@@ -26,6 +26,6 @@ jobs:
           
           script: | #Script to run after SSH-ing
             cd bots/rice-doll
-            git pull origin/master
+            git pull origin master
             pm2 restart rice-doll
             echo 'rice-doll has been deployed!'
