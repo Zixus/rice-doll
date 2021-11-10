@@ -15,13 +15,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: VPS
+    env:
+      host: ${{secrets.SSH_HOST}}
+      username: ${{secrets.SSH_USERNAME}}
+      password: ${{secrets.SSH_PASSWORD}}
     steps:
       - name: deploy rice-doll bot
         uses: appleboy/ssh-action@v0.1.4 #SSH to VPS
         with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USERNAME}}
-          password: ${{secrets.SSH_PASSWORD}}
+          host: ${{env.host}}
+          username: ${{env.username}}
+          password: ${{env.password}}
           
           script: | #Script to run after SSH-ing
             cd bots/rice-doll
