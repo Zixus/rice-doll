@@ -15,10 +15,7 @@ class GohanClient(commands.Bot):
             allowed_mentions=discord.AllowedMentions(
                 roles=False, users=True, everyone=False
             ),
-            intents=discord.Intents.all(),
-            activity=discord.Activity(
-                type=discord.ActivityType.watching, name="people kill each other"
-            )
+            intents=discord.Intents.all()
         )
 
     def run(self, token):
