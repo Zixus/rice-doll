@@ -11,7 +11,7 @@ class GohanClient(commands.Bot):
             command_prefix="/",
             help_command=None,
             case_insensitive=True,
-            description="I primarily run on slash commands!",
+            description="Rice Doll",
             allowed_mentions=discord.AllowedMentions(
                 roles=False, users=True, everyone=False
             ),
