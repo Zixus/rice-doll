@@ -23,7 +23,7 @@ class GohanClient(commands.Bot):
 
     def help(self):
         help_desc = "Usage: `{0}roll <syntax> [#<comments>]` or `{0}r <syntax> [#<comments>]`\nNo, this bot **can't do math**.\nRefer to https://pypi.org/project/d20/ for the rolling syntax. =w=)7"
-        return help_desc
+        return help_desc.format(self.command_prefix)
 
     def roll(self, args):  
         try:
