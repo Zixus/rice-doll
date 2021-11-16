@@ -8,7 +8,7 @@ class GohanClient(commands.Bot):
 	
     def __init__(self):
         super().__init__(
-            command_prefix="?",
+            command_prefix="/",
             help_command=None,
             case_insensitive=True,
             description="I primarily run on slash commands!",
