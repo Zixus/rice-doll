@@ -28,8 +28,11 @@ class GohanClient(commands.Bot):
     def roll(self, args):  
         try:
             parse = re.sub(" +", "", args[0]) #remove spaces
-            result = d20.roll(parse)
-            return result
+            result = str(d20.roll(parse))
+            comment = ""
+            if(len(args) > 1):
+                comment = "".join(args[1:])
+            return comment + " : " + result
         except Exception as e:
             response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
             return response
