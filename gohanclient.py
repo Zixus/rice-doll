@@ -35,3 +35,4 @@ class GohanClient(commands.Bot):
         except Exception as e:
             response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
             return response
+            

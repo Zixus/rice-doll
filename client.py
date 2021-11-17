@@ -7,3 +7,4 @@ if __name__ == "__main__":
 	load_dotenv()
 	TOKEN = os.getenv('DISCORD_TOKEN')
 	bot.run(TOKEN)
+	
