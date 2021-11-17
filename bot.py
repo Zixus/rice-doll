@@ -1,6 +1,5 @@
 import discord
 from gohanclient import GohanClient
-from discord.ext import commands
 
 bot = GohanClient()
 
