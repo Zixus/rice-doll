@@ -11,5 +11,3 @@ async def help(ctx):
 async def roll(ctx, *args):
     message = "<@{}> ".format(ctx.author.id) + bot.roll(args)
     await ctx.send(message)
-
-    
