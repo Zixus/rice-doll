@@ -30,7 +30,7 @@ class GohanClient(commands.Bot):
             result = str(d20.roll(parse))
             comment = ""
             if(len(args) > 1):
-                comment = "".join(args[1:])
+                comment = " ".join(args[1:])
             return comment + " : " + result
         except Exception as e:
             response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
