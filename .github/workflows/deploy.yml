@@ -24,6 +24,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: VPS
+    needs: lint
     steps:
       - name: deploy rice-doll bot
         uses: appleboy/ssh-action@v0.1.4 #SSH to VPS
