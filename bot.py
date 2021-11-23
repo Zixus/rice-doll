@@ -13,3 +13,9 @@ async def help(ctx):
 async def roll(ctx, *args):
     message = "<@{}> ".format(ctx.author.id) + bot.roll(args)
     await ctx.send(message)
+
+
+@bot.command(aliases=['gr'])
+async def groll(ctx, *args):
+    message = "<@{}> ".format(ctx.author.id) + bot.ghost_roll(args)
+    await ctx.send(message)
