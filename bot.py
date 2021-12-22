@@ -1,4 +1,5 @@
 import discord
+from function.chat_exporter import Logger
 from gohanclient import GohanClient
 
 bot = GohanClient()
@@ -26,13 +27,6 @@ async def start(ctx, message_id: int):
     to_date = ctx.message.created_at
     from_date = (await ctx.fetch_message(message_id)).created_at
 
-    history = await ctx.channel.history(
-        before=to_date,
-        after=from_date,
-        oldest_first=True
-    ).flatten()
-
-    message_list = [{"content": x.content, "author": x.author.id} for x in history]
-    [print(x) for x in history]
-    # print(message_list)
+    logger = Logger(ctx, message_id)
+    logger.message()
     await ctx.send("From {} to {}".format(from_date.strftime("%d/%m/%Y, %H:%M"), to_date.strftime("%d/%m/%Y, %H:%M")))
