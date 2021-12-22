@@ -65,3 +65,34 @@ class GohanClient(commands.Bot):
         except Exception as e:
             response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
             return response
+
+    def shadow_roll(self, args):
+        try:
+            roll_string = '1d20'
+            comment = ""
+
+            # Add Score
+            modifier = re.search(r'\d+', args[0]).group()
+            if modifier != '':
+                roll_string += '+' + modifier
+
+            # Calculate Score to Mod
+            roll_string += '-10'
+
+            # Add Bane and Boon
+            boon_bane_mod = args[0].count("+") - args[0].count("-")
+            if boon_bane_mod != 0:
+                if boon_bane_mod < 0:
+                    roll_string += '-'
+                else:
+                    roll_string += '+'
+                roll_string += str(abs(boon_bane_mod)) + 'd6kh1'
+
+            result = d20.roll(roll_string)
+
+            if(len(args) > 1):
+                comment = " ".join(args[1:])
+            return comment + " : " + str(result)
+        except Exception as e:
+            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
+            return response

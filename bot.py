@@ -19,3 +19,9 @@ async def roll(ctx, *args):
 async def groll(ctx, *args):
     message = "<@{}> ".format(ctx.author.id) + bot.ghost_roll(args)
     await ctx.send(message)
+
+
+@bot.command(aliases=['sr'])
+async def sroll(ctx, *args):
+    message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args)
+    await ctx.send(message)
