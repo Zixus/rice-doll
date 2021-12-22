@@ -71,13 +71,14 @@ class GohanClient(commands.Bot):
             roll_string = '1d20'
             comment = ""
 
-            # Add Score
-            modifier = re.search(r'\d+', args[0]).group()
-            if modifier != '':
-                roll_string += '+' + modifier
-
-            # Calculate Score to Mod
-            roll_string += '-10'
+            # Add modifier
+            score = int(re.search(r'\d+', args[0]).group())-10
+            if score != 0:
+                if score < 0:
+                    roll_string += '-'
+                else:
+                    roll_string += '+'
+                roll_string += abs(score-10)
 
             # Add Bane and Boon
             boon_bane_mod = args[0].count("+") - args[0].count("-")
