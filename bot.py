@@ -11,15 +11,16 @@ async def help(ctx):
 
 @bot.command(aliases=['r'])
 async def roll(ctx, *args):
-    if(len(args)<1):
+    if(len(args) < 1):
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.roll(args)
     await ctx.send(message)
-    
+
+
 @bot.command(aliases=['gr'])
 async def groll(ctx, *args):
-    if(len(args)<1):
+    if(len(args) < 1):
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.ghost_roll(args)
@@ -28,7 +29,7 @@ async def groll(ctx, *args):
 
 @bot.command(aliases=['sr'])
 async def sroll(ctx, *args):
-    if(len(args)<1):
+    if(len(args) < 1):
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args)
