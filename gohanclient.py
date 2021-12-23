@@ -6,8 +6,8 @@ import logging
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s')
 
-class GohanClient(commands.Bot):
 
+class GohanClient(commands.Bot):
     errorMsg = "Something is wrong. Please check your input"
 
     def __init__(self):
