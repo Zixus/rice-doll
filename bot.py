@@ -1,6 +1,5 @@
 import discord
 from gohanclient import GohanClient
-from logger import Log
 
 bot = GohanClient()
 
@@ -20,11 +19,17 @@ async def roll(ctx, *args):
     
 @bot.command(aliases=['gr'])
 async def groll(ctx, *args):
+    if(len(args)<1):
+        await ctx.send("Please input a roll argument")
+        return
     message = "<@{}> ".format(ctx.author.id) + bot.ghost_roll(args)
     await ctx.send(message)
 
 
 @bot.command(aliases=['sr'])
 async def sroll(ctx, *args):
+    if(len(args)<1):
+        await ctx.send("Please input a roll argument")
+        return
     message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args)
     await ctx.send(message)
