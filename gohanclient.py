@@ -2,9 +2,14 @@ import discord
 from discord.ext import commands
 import d20
 import re
+import logging
 
+logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s')
 
 class GohanClient(commands.Bot):
+
+    errorMsg = "Something is wrong. Please check your input"
+
     def __init__(self):
         super().__init__(
             command_prefix="/",
@@ -37,8 +42,8 @@ class GohanClient(commands.Bot):
                 comment = " ".join(args[1:])
             return comment + " : " + result
         except Exception as e:
-            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
-            return response
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
 
     def ghost_roll(self, args):
         try:
@@ -63,8 +68,8 @@ class GohanClient(commands.Bot):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result) + ghost_warning
         except Exception as e:
-            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
-            return response
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
 
     def shadow_roll(self, args):
         try:
@@ -95,5 +100,5 @@ class GohanClient(commands.Bot):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
-            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
-            return response
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
