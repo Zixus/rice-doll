@@ -2,11 +2,13 @@ r"""
 Chat Exporter Class
 """
 from pathlib import Path
+import os
+from .util import get_local_timestamp
 
 
 class Logger:
 
-    TIME_FORMAT = "%d/%m/%Y, %H:%M"
+    TIME_FORMAT = "%d-%m-%Y, %H:%M"
 
     def __init__(self, ctx, from_date, to_date):
         self.ctx = ctx
@@ -57,3 +59,25 @@ class Logger:
         message_list = await self.message_list()
         messages = [(message.author.display_name, message.content) for message in message_list]
         print(messages)
+
+    async def log_to_textfile(self):
+        log_begin_timestamp = get_local_timestamp(self.from_date)
+        log_end_timestamp = get_local_timestamp(self.to_date)
+        guild_name = self.ctx.guild.name
+        channel_name = self.ctx.message.channel.name
+
+        filename = f"[{guild_name}|{channel_name}] {log_begin_timestamp} - {log_end_timestamp}.txt"
+        folderpath = f"./{guild_name}/"
+        filepath = os.path.join(folderpath, filename)
+
+        if not os.path.exists(folderpath):
+            os.makedirs(folderpath)
+
+        message_list = await self.message_list()
+
+        with open(filepath, 'w+') as f:
+            for message in message_list:
+                f.write(f"[{get_local_timestamp(message.created_at)}]"
+                        f" {message.author.display_name}: {message.content}\n")
+
+        return filepath

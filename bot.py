@@ -1,8 +1,10 @@
 import discord
 from function.chat_exporter import Logger
 from gohanclient import GohanClient
+import re
 
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
+
 bot = GohanClient()
 
 
@@ -46,3 +48,14 @@ async def start(ctx, message_id: int):
     await logger.message()
     await ctx.send(f" From {from_date.strftime(TIMESTAMP_TEMPLATE)}"
                    f" to {to_date.strftime(TIMESTAMP_TEMPLATE)} ")
+
+
+@bot.command(aliases=['lt'])
+async def logtxt(ctx, message_id: int):
+    to_date = ctx.message.created_at
+    from_date = (await ctx.fetch_message(message_id)).created_at
+    logger = Logger(ctx, from_date, to_date)
+    filepath = await logger.log_to_textfile()
+    filename = filepath.split("/")[-1].replace(" ", "_")
+    filename = re.sub(r'[^A-Za-z\d_\-\.]+', '', filename)
+    await ctx.send(file=discord.File(filepath, filename=filename))
