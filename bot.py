@@ -2,6 +2,7 @@ import discord
 from function.chat_exporter import Logger
 from gohanclient import GohanClient
 
+TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
 bot = GohanClient()
 
 
@@ -36,11 +37,12 @@ async def sroll(ctx, *args):
     message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args)
     await ctx.send(message)
 
+
 @bot.command()
 async def start(ctx, message_id: int):
     to_date = ctx.message.created_at
     from_date = (await ctx.fetch_message(message_id)).created_at
-
-    logger = Logger(ctx, message_id)
-    logger.message()
-    await ctx.send("From {} to {}".format(from_date.strftime("%d/%m/%Y, %H:%M"), to_date.strftime("%d/%m/%Y, %H:%M")))
+    logger = Logger(ctx, from_date, to_date)
+    await logger.message()
+    await ctx.send(f" From {from_date.strftime(TIMESTAMP_TEMPLATE)}"
+                   f" to {to_date.strftime(TIMESTAMP_TEMPLATE)} ")

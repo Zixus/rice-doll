@@ -2,31 +2,30 @@ r"""
 Chat Exporter Class
 """
 from pathlib import Path
-import asyncio
 
 
 class Logger:
 
     TIME_FORMAT = "%d/%m/%Y, %H:%M"
 
-    def __init__(self, ctx, message_id):
+    def __init__(self, ctx, from_date, to_date):
         self.ctx = ctx
-        self.message_id = message_id
-        self.to_date = ctx.message.created_at
-        self.from_date = (await ctx.fetch_message(message_id)).created_at
+        self.from_date = from_date
+        self.to_date = to_date
 
     def log_info(self):
         log_info = {
             "guild_icon": self.ctx.guild.icon_url if self.ctx.guild.icon else "",
             "server_name": self.ctx.guild.name,
-            "category_name": self.ctx.message.channel.category.name if self.ctx.message.channel.category else None,
+            "category_name": self.ctx.message.channel.category.name
+            if self.ctx.message.channel.category else None,
             "channel_name": self.ctx.message.channel.name,
             "from_date": self.from_date.strftime(self.TIME_FORMAT),
             "to_date": self.to_date.strftime(self.TIME_FORMAT)
         }
         return log_info
 
-    def message_list(self):
+    async def message_list(self):
         history = await self.ctx.channel.history(
             before=self.to_date,
             after=self.from_date,
@@ -54,7 +53,7 @@ class Logger:
         )
         return body_info
 
-    def message(self):
-        message_list = self.message_list()
-        (author, message) = [(message.author, message.content) for message in message_list]
-        print(author)
+    async def message(self):
+        message_list = await self.message_list()
+        messages = [(message.author.display_name, message.content) for message in message_list]
+        print(messages)
