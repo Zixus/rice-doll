@@ -2,9 +2,14 @@ import discord
 from discord.ext import commands
 import d20
 import re
+import logging
+
+logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s')
 
 
 class GohanClient(commands.Bot):
+    errorMsg = "Something is wrong. Please check your input"
+
     def __init__(self):
         super().__init__(
             command_prefix="/",
@@ -37,8 +42,8 @@ class GohanClient(commands.Bot):
                 comment = " ".join(args[1:])
             return comment + " : " + result
         except Exception as e:
-            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
-            return response
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
 
     def ghost_roll(self, args):
         try:
@@ -63,5 +68,37 @@ class GohanClient(commands.Bot):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result) + ghost_warning
         except Exception as e:
-            response = "\n" + str(type(e)) + ':\n' + str(e) + "\n\n"
-            return response
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
+
+    def shadow_roll(self, args):
+        try:
+            roll_string = '1d20'
+            comment = ""
+
+            # Add modifier
+            mod = int(re.search(r'\d+', args[0]).group())-10
+            if mod != 0:
+                if mod < 0:
+                    roll_string += '-'
+                else:
+                    roll_string += '+'
+                roll_string += str(abs(mod))
+
+            # Add Bane and Boon
+            boon_bane_mod = args[0].count("+") - args[0].count("-")
+            if boon_bane_mod != 0:
+                if boon_bane_mod < 0:
+                    roll_string += '-'
+                else:
+                    roll_string += '+'
+                roll_string += str(abs(boon_bane_mod)) + 'd6kh1'
+
+            result = d20.roll(roll_string)
+
+            if(len(args) > 1):
+                comment = " ".join(args[1:])
+            return comment + " : " + str(result)
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
