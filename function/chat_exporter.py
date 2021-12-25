@@ -3,12 +3,13 @@ Chat Exporter Class
 """
 from pathlib import Path
 import os
-from .util import get_local_timestamp
+from .util import get_local_timestamp, map_mention, strip_markdown_txt
 
 
 class Logger:
 
     TIME_FORMAT = "%d-%m-%Y, %H:%M"
+    LIMIT = 100
 
     def __init__(self, ctx, from_date, to_date):
         self.ctx = ctx
@@ -28,12 +29,20 @@ class Logger:
         return log_info
 
     async def message_list(self):
-        history = await self.ctx.channel.history(
-            before=self.to_date,
-            after=self.from_date,
-            oldest_first=True
-        ).flatten()
-        return history
+        toggle = True
+        message_list = []
+        history = []
+        while toggle or len(history) >= self.LIMIT:
+            history = await self.ctx.channel.history(
+                limit=self.LIMIT,
+                before=self.to_date,
+                after=self.from_date,
+                oldest_first=True
+            ).flatten()
+            message_list.extend(history)
+            self.from_date = history[-1].created_at
+            toggle = False
+        return message_list
 
     def header(self):
         log_info = self.log_info()
@@ -57,8 +66,9 @@ class Logger:
 
     async def message(self):
         message_list = await self.message_list()
-        messages = [(message.author.display_name, message.content) for message in message_list]
-        print(messages)
+        # messages = [(message.author.display_name, message.content) for message in message_list]
+        for m in message_list:
+            print(m)
 
     async def log_to_textfile(self):
         log_begin_timestamp = get_local_timestamp(self.from_date)
@@ -66,7 +76,7 @@ class Logger:
         guild_name = self.ctx.guild.name
         channel_name = self.ctx.message.channel.name
 
-        filename = f"[{guild_name}|{channel_name}] {log_begin_timestamp} - {log_end_timestamp}.txt"
+        filename = f"{guild_name}-{channel_name} {log_begin_timestamp} - {log_end_timestamp}.txt"
         folderpath = f"./{guild_name}/"
         filepath = os.path.join(folderpath, filename)
 
@@ -77,7 +87,11 @@ class Logger:
 
         with open(filepath, 'w+') as f:
             for message in message_list:
+                if len(message.mentions) > 0:
+                    text_content = map_mention(message.content, message.mentions)
+                text_content = strip_markdown_txt(text_content)
+
                 f.write(f"[{get_local_timestamp(message.created_at)}]"
-                        f" {message.author.display_name}: {message.content}\n")
+                        f" {message.author.display_name}: {text_content}\n")
 
         return filepath
