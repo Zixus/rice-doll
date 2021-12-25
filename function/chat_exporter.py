@@ -3,7 +3,7 @@ Chat Exporter Class
 """
 from pathlib import Path
 import os
-from .util import get_local_timestamp, strip_markdown_txt
+from .util import get_local_timestamp, map_mention, strip_markdown_txt
 
 
 class Logger:
@@ -66,8 +66,9 @@ class Logger:
 
     async def message(self):
         message_list = await self.message_list()
-        messages = [(message.author.display_name, message.content) for message in message_list]
-        print(messages)
+        # messages = [(message.author.display_name, message.content) for message in message_list]
+        for m in message_list:
+            print(m)
 
     async def log_to_textfile(self):
         log_begin_timestamp = get_local_timestamp(self.from_date)
@@ -86,7 +87,9 @@ class Logger:
 
         with open(filepath, 'w+') as f:
             for message in message_list:
-                text_content = strip_markdown_txt(message.content)
+                if len(message.mentions) > 0:
+                    text_content = map_mention(message.content, message.mentions)
+                text_content = strip_markdown_txt(text_content)
 
                 f.write(f"[{get_local_timestamp(message.created_at)}]"
                         f" {message.author.display_name}: {text_content}\n")

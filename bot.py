@@ -42,9 +42,19 @@ async def sroll(ctx, *args):
 
 
 @bot.command()
-async def start(ctx, message_id: int):
-    to_date = ctx.message.created_at
-    from_date = (await ctx.fetch_message(message_id)).created_at
+async def start(ctx, begin_message_id: int = None, end_message_id: int = None):
+    if begin_message_id is None:
+        await ctx.send("Please input the message id of the log's beginning!\n"
+                       "example: /start 923913920327332")
+        return
+
+    if end_message_id is None:
+        to_date = ctx.message.created_at
+    else:
+        to_date = (await ctx.fetch_message(end_message_id)).created_at + millis()
+
+    from_date = (await ctx.fetch_message(begin_message_id)).created_at - millis()
+
     logger = Logger(ctx, from_date, to_date)
     await logger.message()
     await ctx.send(f" From {from_date.strftime(TIMESTAMP_TEMPLATE)}"

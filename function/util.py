@@ -42,5 +42,14 @@ def strip_markdown_txt(str):
     return sub_discord_markdown(str, config)
 
 
+def map_mention(s, mentions):
+    mention_dict = dict()
+
+    for m in mentions:
+        mention_dict[str(m.id)] = m.display_name
+
+    return re.sub(r'<@!(\d+)>', lambda match: fr'@{mention_dict[match.group(1)]}', s)
+
+
 def striken(text):
     return ''.join(t+chr(822) for t in text)
