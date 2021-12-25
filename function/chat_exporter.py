@@ -87,8 +87,9 @@ class Logger:
 
         with open(filepath, 'w+') as f:
             for message in message_list:
+                text_content = message.content
                 if len(message.mentions) > 0:
-                    text_content = map_mention(message.content, message.mentions)
+                    text_content = map_mention(message.content, text_content)
                 text_content = strip_markdown_txt(text_content)
 
                 f.write(f"[{get_local_timestamp(message.created_at)}]"

@@ -48,7 +48,7 @@ def map_mention(s, mentions):
     for m in mentions:
         mention_dict[str(m.id)] = m.display_name
 
-    return re.sub(r'<@!(\d+)>', lambda match: fr'@{mention_dict[match.group(1)]}', s)
+    return re.sub(r'<@.*(\d+)>', lambda match: fr'@{mention_dict[match.group(1)]}', s)
 
 
 def striken(text):
