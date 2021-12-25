@@ -20,7 +20,7 @@ def sub_discord_markdown(str, conf):
     str = re.sub(r'__([^__]*)__', fr'{conf["underline"][0]}\1{conf["underline"][1]}', str)
     str = re.sub(r'\*([^\*]*)\*', fr'{conf["italic"][0]}\1{conf["italic"][1]}', str)
     str = re.sub(r'_([^_]*)_', fr'{conf["italic"][0]}\1{conf["italic"][1]}', str)
-    str = re.sub(r'_([^_]*)_', fr'{conf["strike"][0]}\1{conf["strike"][1]}', str)
+    str = re.sub(r'~~([^~~]*)~~', fr'{conf["strike"][0]}\1{conf["strike"][1]}', str)
     str = re.sub(r'`([^`]*)`', fr'{conf["onelinecode"][0]}\1{conf["onelinecode"][1]}', str)
     str = re.sub(r'^> (.*)', fr'{conf["quoteblock"]}\1', str)  # for the first quote block
     str = re.sub(r'\n> (.*)', fr'\n{conf["quoteblock"]}\1', str)  # for any quote block afte
@@ -34,8 +34,14 @@ def strip_markdown_txt(str):
         'italic': ('', ''),
         'onelinecode': ('', ''),
         'quoteblock': '',
-        'strike': ('~~', '~~'),
+        'strike': ('', ''),
         'underline': ('', ''),
     })
-
+    str = re.sub(r'~~([^~~]*)~~', lambda match:fr'{striken(match.group(1))}', str)
     return sub_discord_markdown(str, config)
+
+
+def striken(text):
+    return ''.join(t+chr(822) for t in text)
+
+print(strip_markdown_txt("ini di~~coret~~ ~~dan ini juga dicoret kecuali~~ ini"))
