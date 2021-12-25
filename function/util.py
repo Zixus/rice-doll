@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 LOCAL_OFFSET_HOUR = 7
-TIME_FORMAT = "%d-%m-%Y, %H:%M"
+TIME_FORMAT = "%d-%m-%Y %H.%M"
 
 
 def get_local_timestamp(ts):

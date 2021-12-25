@@ -9,6 +9,7 @@ from .util import get_local_timestamp
 class Logger:
 
     TIME_FORMAT = "%d-%m-%Y, %H:%M"
+    LIMIT = 100
 
     def __init__(self, ctx, from_date, to_date):
         self.ctx = ctx
@@ -28,12 +29,20 @@ class Logger:
         return log_info
 
     async def message_list(self):
-        history = await self.ctx.channel.history(
-            before=self.to_date,
-            after=self.from_date,
-            oldest_first=True
-        ).flatten()
-        return history
+        toggle = True
+        message_list = []
+        history = []
+        while toggle or len(history) >= self.LIMIT:
+            history = await self.ctx.channel.history(
+                limit=self.LIMIT,
+                before=self.to_date,
+                after=self.from_date,
+                oldest_first=True
+            ).flatten()
+            message_list.extend(history)
+            self.from_date = history[-1].created_at
+            toggle = False
+        return message_list
 
     def header(self):
         log_info = self.log_info()
@@ -66,7 +75,7 @@ class Logger:
         guild_name = self.ctx.guild.name
         channel_name = self.ctx.message.channel.name
 
-        filename = f"[{guild_name}|{channel_name}] {log_begin_timestamp} - {log_end_timestamp}.txt"
+        filename = f"{guild_name}-{channel_name} {log_begin_timestamp} - {log_end_timestamp}.txt"
         folderpath = f"./{guild_name}/"
         filepath = os.path.join(folderpath, filename)
 
