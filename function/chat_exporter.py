@@ -3,7 +3,7 @@ Chat Exporter Class
 """
 from pathlib import Path
 import os
-from .util import get_local_timestamp
+from .util import get_local_timestamp, strip_markdown_txt
 
 
 class Logger:
@@ -86,7 +86,9 @@ class Logger:
 
         with open(filepath, 'w+') as f:
             for message in message_list:
+                text_content = strip_markdown_txt(message.content)
+
                 f.write(f"[{get_local_timestamp(message.created_at)}]"
-                        f" {message.author.display_name}: {message.content}\n")
+                        f" {message.author.display_name}: {text_content}\n")
 
         return filepath
