@@ -37,7 +37,6 @@ def strip_markdown_txt(str):
         'strike': ('', ''),
         'underline': ('', ''),
     })
-    str = re.sub(r'<:(.*):\d+>', r':\1:', str)
     str = re.sub(r'~~([^~~]*)~~', lambda match: fr'{striken(match.group(1))}', str)
     return sub_discord_markdown(str, config)
 
