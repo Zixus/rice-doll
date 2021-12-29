@@ -48,18 +48,18 @@ class GohanClient(commands.Bot):
     def roll(self, args):
         try:
             parse = re.sub(" +", "", args[0])  # remove spaces
-            result = str(d20.roll(parse))
             comment = ""
+            result = self._roll(parse)
+
             if(len(args) > 1):
                 comment = " ".join(args[1:])
-            return comment + " : " + result
+            return comment + " : " + str(result)
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
 
     def bool_roll(self, args):
         try:
-            success = 0
             comment = ""
             parse = args[0]
             curOps = ""
@@ -71,9 +71,33 @@ class GohanClient(commands.Bot):
 
             if curOps in booleanOps:
                 target = int(parse.split(curOps, 1)[1])
-                result = d20.roll(parse, stringifier=BoolStringifier())
-                dice = self.getDice(result)
+                result, success = self._bool_roll(parse, curOps, target)
 
+                if(len(args) > 1):
+                    comment = " ".join(args[1:])
+                return comment + " : " + str(result) + " = " + str(success) + " success"
+            else:
+                return self.roll(args)
+        except Exception as e:
+            logging.warning(
+                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+            return self.roll(args)
+
+    def _roll(self, parse):
+        try:
+            result = d20.roll(parse)
+            return result
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
+
+    def _bool_roll(self, parse, curOps, target):
+        try:
+            success = 0
+            result = d20.roll(parse, stringifier=BoolStringifier())
+            dice = self.getDice(result)
+
+            if curOps in booleanOps:
                 if dice is None:
                     raise Exception("No d6 dice found in the expression!")
 
@@ -94,14 +118,13 @@ class GohanClient(commands.Bot):
                         if die.number >= target:
                             success = success + 1
 
-                if(len(args) > 1):
-                    comment = " ".join(args[1:])
-                return comment + " : " + str(result) + " = " + str(success) + " success"
+                return result, success
             else:
-                return self.roll(args)
+                return self._roll(parse)
         except Exception as e:
-            logging.error(str(type(e)) + " : " + str(e))
-            return self.errorMsg
+            logging.warning(
+                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+            return self._roll(parse)
 
     def ghost_roll(self, args):
         try:

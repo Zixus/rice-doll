@@ -19,7 +19,7 @@ async def roll(ctx, *args):
     if(len(args) < 1):
         await ctx.send("Please input a roll argument")
         return
-    message = "<@{}> ".format(ctx.author.id) + bot.roll(args)
+    message = "<@{}> ".format(ctx.author.id) + bot.bool_roll(args)
     await ctx.send(message)
 
 
@@ -41,7 +41,7 @@ async def sroll(ctx, *args):
     await ctx.send(message)
 
 
-@bot.command(aliases=['br'])
+@bot.command()
 async def boolRoll(ctx, *args):
     if(len(args) < 1):
         await ctx.send("Please input a roll argument")

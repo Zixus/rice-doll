@@ -19,6 +19,7 @@ class BoolStringifier(d20.SimpleStringifier):
     def __init__(self):
         super().__init__()
         self.target = 0
+        self.curOps = ""
         self._context = self._MDContext()
 
     def stringify(self, the_roll):
@@ -34,7 +35,8 @@ class BoolStringifier(d20.SimpleStringifier):
         return super()._stringify(node)
 
     def _str_expression(self, node):
-        if(node.roll.op in booleanOps):
+        if node.roll.op in booleanOps:
+            self.curOps = node.roll.op
             self.target = node.roll.right.number
         return f"{self._stringify(node.roll.left)}"
 
@@ -42,11 +44,45 @@ class BoolStringifier(d20.SimpleStringifier):
         the_rolls = []
         for val in node.values:
             inside = self._stringify(val)
-            if val.number == node.size:
-                inside = f"**{inside}**"
-            # elif val.number == 1 and self.target != 1: #might won't need this
-            #    inside = f"**~~{inside}~~**"
-            elif val.number < self.target:
-                inside = f"~~{inside}~~"
+            if self.curOps == '=':
+                if (val.number == node.size or val.number == 1) and val.number != self.target:
+                    inside = f"**~~{inside}~~**"
+                elif val.number == node.size or val.number == 1:
+                    inside = f"**{inside}**"
+                elif val.number != self.target:
+                    inside = f"~~{inside}~~"
+            elif self.curOps == '<':
+                if (val.number == node.size or val.number == 1) and val.number >= self.target:
+                    inside = f"**~~{inside}~~**"
+                elif val.number == node.size or val.number == 1:
+                    inside = f"**{inside}**"
+                elif val.number >= self.target:
+                    inside = f"~~{inside}~~"
+            elif self.curOps == '<=':
+                if (val.number == node.size or val.number == 1) and val.number > self.target:
+                    inside = f"**~~{inside}~~**"
+                elif val.number == node.size or val.number == 1:
+                    inside = f"**{inside}**"
+                elif val.number > self.target:
+                    inside = f"~~{inside}~~"
+            elif self.curOps == '>':
+                if (val.number == node.size or val.number == 1) and val.number <= self.target:
+                    inside = f"**~~{inside}~~**"
+                elif val.number == node.size or val.number == 1:
+                    inside = f"**{inside}**"
+                elif val.number <= self.target:
+                    inside = f"~~{inside}~~"
+            elif self.curOps == '>=':
+                if (val.number == node.size or val.number == 1) and val.number < self.target:
+                    inside = f"**~~{inside}~~**"
+                elif val.number == node.size or val.number == 1:
+                    inside = f"**{inside}**"
+                elif val.number < self.target:
+                    inside = f"~~{inside}~~"
+            else:
+                if val.number == node.size:
+                    inside = f"**{inside}**"
+                elif val.number < self.target:
+                    inside = f"~~{inside}~~"
             the_rolls.append(inside)
         return ', '.join(the_rolls)
