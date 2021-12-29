@@ -1,10 +1,15 @@
 import discord
 from discord.ext import commands
+from custom_Stringifier import BoolStringifier
+
 import d20
 import re
 import logging
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s')
+
+arithmeticOps = ['+', '-', '*', '/']
+booleanOps = ['=', '<', '<=', '>', '>=']
 
 
 class GohanClient(commands.Bot):
@@ -21,6 +26,10 @@ class GohanClient(commands.Bot):
             ),
             intents=discord.Intents.all()
         )
+
+    def getDice(self, roll, die):
+        return d20.utils.dfs(
+                roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die)
 
     def run(self, token):
         super().run(token)
@@ -41,6 +50,60 @@ class GohanClient(commands.Bot):
             if(len(args) > 1):
                 comment = " ".join(args[1:])
             return comment + " : " + result
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
+
+    def bool_roll(self, args):
+        try:
+            success = 0
+            comment = ""
+            parse = args[0]
+            curOps = ""
+
+            for ops in booleanOps:
+                if(ops in parse):
+                    curOps = ops
+                parse = re.sub(" "+ops, "", parse)  # remove spaces
+
+            if curOps in booleanOps:
+                target = int(parse.split(curOps, 1)[1])
+                result = d20.roll(parse, stringifier=BoolStringifier())
+                d6_dice = self.getDice(result, 6)
+                if d6_dice is None:
+                    raise Exception("No d6 dice found in the expression!")
+
+                for die in d6_dice.values:
+                    if curOps == '=':
+                        if die.number == target:
+                            success = success + 1
+                        else:
+                            die.drop()
+                    if curOps == '<':
+                        if die.number < target:
+                            success = success + 1
+                        else:
+                            die.drop()
+                    if curOps == '<=':
+                        if die.number <= target:
+                            success = success + 1
+                        else:
+                            die.drop()
+                    if curOps == '>':
+                        if die.number > target:
+                            success = success + 1
+                        else:
+                            die.drop()
+                    if curOps == '>=':
+                        if die.number >= target:
+                            success = success + 1
+                        else:
+                            die.drop()
+                if(len(args) > 1):
+                    comment = " ".join(args[1:])
+                return comment + " : " + str(result) + " = " + str(success) + " success"
+            else:
+                return self.roll(args)
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
