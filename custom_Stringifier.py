@@ -42,7 +42,11 @@ class BoolStringifier(d20.SimpleStringifier):
         the_rolls = []
         for val in node.values:
             inside = self._stringify(val)
-            if val.number >= self.target:
+            if val.number == node.size:
                 inside = f"**{inside}**"
+            # elif val.number == 1 and self.target != 1: #might won't need this
+            #    inside = f"**~~{inside}~~**"
+            elif val.number < self.target:
+                inside = f"~~{inside}~~"
             the_rolls.append(inside)
         return ', '.join(the_rolls)

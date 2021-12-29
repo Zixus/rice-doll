@@ -27,7 +27,10 @@ class GohanClient(commands.Bot):
             intents=discord.Intents.all()
         )
 
-    def getDice(self, roll, die):
+    def getDice(self, roll, die=0):
+        if die == 0:
+            return d20.utils.dfs(
+                roll.expr, lambda node: isinstance(node, d20.Dice))
         return d20.utils.dfs(
                 roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die)
 
@@ -69,36 +72,28 @@ class GohanClient(commands.Bot):
             if curOps in booleanOps:
                 target = int(parse.split(curOps, 1)[1])
                 result = d20.roll(parse, stringifier=BoolStringifier())
-                d6_dice = self.getDice(result, 6)
-                if d6_dice is None:
+                dice = self.getDice(result)
+
+                if dice is None:
                     raise Exception("No d6 dice found in the expression!")
 
-                for die in d6_dice.values:
+                for die in dice.values:
                     if curOps == '=':
                         if die.number == target:
                             success = success + 1
-                        else:
-                            die.drop()
                     if curOps == '<':
                         if die.number < target:
                             success = success + 1
-                        else:
-                            die.drop()
                     if curOps == '<=':
                         if die.number <= target:
                             success = success + 1
-                        else:
-                            die.drop()
                     if curOps == '>':
                         if die.number > target:
                             success = success + 1
-                        else:
-                            die.drop()
                     if curOps == '>=':
                         if die.number >= target:
                             success = success + 1
-                        else:
-                            die.drop()
+
                 if(len(args) > 1):
                     comment = " ".join(args[1:])
                 return comment + " : " + str(result) + " = " + str(success) + " success"
