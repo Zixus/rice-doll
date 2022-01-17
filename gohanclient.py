@@ -158,7 +158,14 @@ class GohanClient(commands.Bot):
             comment = ""
 
             # Add modifier
-            mod = int(re.search(r'\d+', args[0]).group())-10
+            numVal = int(re.search(r'\d+', args[0]).group())
+            if args[0][0] == '+':
+                mod = numVal
+            elif args[0][0] == '-':
+                mod = -numVal
+            else:
+                mod = numVal-10
+                
             if mod != 0:
                 if mod < 0:
                     roll_string += '-'
