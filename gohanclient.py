@@ -165,7 +165,7 @@ class GohanClient(commands.Bot):
                 mod = -numVal
             else:
                 mod = numVal-10
-                
+
             if mod != 0:
                 if mod < 0:
                     roll_string += '-'
