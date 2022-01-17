@@ -179,8 +179,8 @@ class GohanClient(commands.Bot):
                 roll_string += str(abs(mod))
 
             # Add Bane and Boon
-            boonNumSyntax = re.search(r'\+\d', rollinput)
-            baneNumSyntax = re.search(r'\-\d', rollinput)
+            boonNumSyntax = re.search(r'\+\d+', rollinput)
+            baneNumSyntax = re.search(r'\-\d+', rollinput)
 
             if boonNumSyntax:
                 boonVal = boonNumSyntax.group()
