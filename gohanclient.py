@@ -185,12 +185,12 @@ class GohanClient(commands.Bot):
             if boonNumSyntax:
                 boonVal = boonNumSyntax.group()
                 rollinput.replace(boonVal, '')
-                rollinput += boonVal[0] * int(boonVal[1])
+                rollinput += boonVal[0] * int(boonVal[1:])
 
             if baneNumSyntax:
                 baneVal = baneNumSyntax.group()
                 rollinput.replace(baneVal, '')
-                rollinput += baneVal[0] * int(baneVal[1])
+                rollinput += baneVal[0] * int(baneVal[1:])
 
             boon_bane_mod = rollinput.count("+") - rollinput.count("-")
             if boon_bane_mod != 0:
