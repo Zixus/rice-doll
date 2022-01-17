@@ -157,12 +157,17 @@ class GohanClient(commands.Bot):
             roll_string = '1d20'
             comment = ""
 
+            rollinput = args[0]
+
             # Add modifier
-            numVal = int(re.search(r'\d+', args[0]).group())
-            if args[0][0] == '+':
+            numVal = int(re.search(r'\d+', rollinput).group())
+
+            if rollinput[0] == '+':
                 mod = numVal
-            elif args[0][0] == '-':
+                rollinput = rollinput.lstrip('+-')
+            elif rollinput[0] == '-':
                 mod = -numVal
+                rollinput = rollinput.lstrip('+-')
             else:
                 mod = numVal-10
 
@@ -174,7 +179,20 @@ class GohanClient(commands.Bot):
                 roll_string += str(abs(mod))
 
             # Add Bane and Boon
-            boon_bane_mod = args[0].count("+") - args[0].count("-")
+            boonNumSyntax = re.search(r'\+\d', rollinput)
+            baneNumSyntax = re.search(r'\-\d', rollinput)
+
+            if boonNumSyntax:
+                boonVal = boonNumSyntax.group()
+                rollinput.replace(boonVal, '')
+                rollinput += boonVal[0] * int(boonVal[1])
+
+            if baneNumSyntax:
+                baneVal = baneNumSyntax.group()
+                rollinput.replace(baneVal, '')
+                rollinput += baneVal[0] * int(baneVal[1])
+
+            boon_bane_mod = rollinput.count("+") - rollinput.count("-")
             if boon_bane_mod != 0:
                 if boon_bane_mod < 0:
                     roll_string += '-'
