@@ -1,8 +1,14 @@
 import discord
 from function.chat_exporter import Logger
 from gohanclient import GohanClient
-from function.util import millis
+from function.util import get_local_timestamp, millis
 import re
+import io
+import sys
+
+sys.path.insert(1, './DiscordChatExporterPy')
+import chat_exporter  # noqa: E402
+
 
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
 
@@ -89,3 +95,34 @@ async def logtxt(ctx, begin_message_id: int = None, end_message_id: int = None):
     filename = filepath.split("/")[-1].replace(" ", "_")
     filename = re.sub(r'[^A-Za-z\d_\-.]+', '', filename)
     await ctx.send(file=discord.File(filepath, filename=filename))
+
+
+@bot.command(aliases=['lh', 'logweb', 'lw'])
+async def loghtml(ctx, begin_message_id=None, end_message_id=None, filename=None):
+    end_time = None
+    begin_time = None
+
+    if begin_message_id:
+        begin_time = (await ctx.fetch_message(begin_message_id)).created_at - millis()
+
+    if end_message_id:
+        end_time = (await ctx.fetch_message(end_message_id)).created_at + millis()
+
+    transcript = await chat_exporter.export(ctx.channel, ctx.guild, limit=None,
+                                            begin_time=begin_time, end_time=end_time,
+                                            set_timezone="Asia/Jakarta"
+                                            )
+
+    if transcript is None:
+        return
+
+    if not filename:
+        filename = (f"{ctx.guild.name}-{ctx.message.channel.name}_"
+                    f"{get_local_timestamp(begin_time)} - {get_local_timestamp(end_time)}")
+        filename = filename.replace(" ", "_")
+        filename = re.sub(r'[^A-Za-z\d_\-.]+', '', filename)
+
+    transcript_file = discord.File(io.BytesIO(transcript.encode()),
+                                   filename=f"transcript-{filename}.html")
+
+    await ctx.send(file=transcript_file)
