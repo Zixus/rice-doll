@@ -1,0 +1,3 @@
+[submodule "DiscordChatExporterPy"]
+	path = DiscordChatExporterPy
+	url = https://github.com/ppukj-dev/DiscordChatExporterPy
