@@ -9,7 +9,8 @@ TIME_FORMAT = "%d-%m-%Y %H.%M"
 
 def get_local_timestamp(ts):
     if ts is None:
-        return datetime.now().strftime(TIME_FORMAT)
+        local_time_now = datetime.now + timedelta(hours=LOCAL_OFFSET_HOUR)
+        return local_time_now.strftime(TIME_FORMAT)
 
     local_ts = ts + timedelta(hours=LOCAL_OFFSET_HOUR)
     return local_ts.strftime(TIME_FORMAT)
