@@ -1,5 +1,7 @@
 from datetime import timedelta
 import re
+import requests
+import io
 
 LOCAL_OFFSET_HOUR = 7
 TIME_FORMAT = "%d-%m-%Y %H.%M"
@@ -53,3 +55,21 @@ def map_mention(s, mentions):
 
 def striken(text):
     return ''.join(t+chr(822) for t in text)
+
+
+async def get_avatar(transcript: str):
+    avatars = re.findall(r'"https://cdn.discordapp.com/avatars/.*"', transcript)
+    # make it unique
+    avatars = list(set(avatars))
+
+    file = []
+    for a in avatars:
+        a = a.strip('"')
+        file.append(
+            {
+                'filename': a.split('/')[-1].split('?')[0],
+                'image': io.BytesIO(requests.get(a, stream=True).content),
+                'avatar_string': a
+            }
+        )
+    return file

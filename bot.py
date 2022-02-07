@@ -1,19 +1,38 @@
+import asyncio
 import discord
 from function.chat_exporter import Logger
 from gohanclient import GohanClient
-from function.util import get_local_timestamp, millis
+from function.util import get_avatar, get_local_timestamp, millis
 import re
 import io
 import sys
 
+import os
+from dotenv import load_dotenv
 sys.path.insert(1, './DiscordChatExporterPy')
 import chat_exporter  # noqa: E402
 
 
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
+load_dotenv('.env')
+DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
 
 bot = GohanClient()
 
+
+# Non-Command Function
+async def replace_avatar(file, trancript):
+    transcript_string = trancript
+    dump_channel = bot.get_channel(DUMP_CHANNEL)
+    for f in file:
+        avatar_file = discord.File(f['image'], filename=f['filename'])
+        sent_image = await dump_channel.send(file=avatar_file)
+        attachment = sent_image.attachments[0].url
+        await asyncio.sleep(1)
+        transcript_string = transcript_string.replace(f['avatar_string'], attachment)
+    return transcript_string
+
+# Command Function
 
 @bot.command(aliases=['h'])
 async def help(ctx):
@@ -122,6 +141,8 @@ async def loghtml(ctx, begin_message_id=None, end_message_id=None, filename=None
         filename = filename.replace(" ", "_")
         filename = re.sub(r'[^A-Za-z\d_\-.]+', '', filename)
 
+    transcript = await replace_avatar(await get_avatar(transcript=transcript), trancript=transcript)
+    await asyncio.sleep(1)
     transcript_file = discord.File(io.BytesIO(transcript.encode()),
                                    filename=f"transcript-{filename}.html")
 
