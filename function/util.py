@@ -58,7 +58,7 @@ def striken(text):
 
 
 async def get_avatar(transcript: str):
-    avatars = re.findall(r'"https://cdn.discordapp.com/avatars/.*"', transcript)
+    avatars = re.findall(r'".*\/avatars\/.*"', transcript)
     # make it unique
     avatars = list(set(avatars))
 
