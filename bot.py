@@ -7,12 +7,15 @@ import re
 import io
 import sys
 
+import os
+from dotenv import load_dotenv
 sys.path.insert(1, './DiscordChatExporterPy')
 import chat_exporter  # noqa: E402
 
 
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
-DUMP_CHANNEL = 940066012873785404
+load_dotenv('.env')
+DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
 
 bot = GohanClient()
 

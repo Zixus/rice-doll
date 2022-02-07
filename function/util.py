@@ -64,7 +64,7 @@ async def get_avatar(transcript: str):
 
     file = []
     for a in avatars:
-        a = a[1:-1]
+        a = a.strip('"')
         file.append(
             {
                 'filename': a.split('/')[-1].split('?')[0],
