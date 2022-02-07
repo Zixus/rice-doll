@@ -34,6 +34,7 @@ async def replace_avatar(file, trancript):
 
 # Command Function
 
+
 @bot.command(aliases=['h'])
 async def help(ctx):
     await ctx.send(embed=discord.Embed(description=bot.help()))
