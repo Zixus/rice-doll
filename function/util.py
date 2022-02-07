@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 import re
 import requests
 import io
@@ -8,6 +8,9 @@ TIME_FORMAT = "%d-%m-%Y %H.%M"
 
 
 def get_local_timestamp(ts):
+    if ts is None:
+        return datetime.now().strftime(TIME_FORMAT)
+
     local_ts = ts + timedelta(hours=LOCAL_OFFSET_HOUR)
     return local_ts.strftime(TIME_FORMAT)
 
