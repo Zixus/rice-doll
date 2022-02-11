@@ -29,19 +29,21 @@ class Logger:
         return log_info
 
     async def message_list(self):
-        toggle = True
         message_list = []
-        history = []
-        while toggle or len(history) >= self.LIMIT:
+
+        while True:
             history = await self.ctx.channel.history(
                 limit=self.LIMIT,
                 before=self.to_date,
                 after=self.from_date,
                 oldest_first=True
             ).flatten()
+
+            if not history:
+                break
+
             message_list.extend(history)
             self.from_date = history[-1].created_at
-            toggle = False
         return message_list
 
     def header(self):
