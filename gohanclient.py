@@ -94,6 +94,10 @@ class GohanClient(commands.Bot):
     def _bool_roll(self, parse, curOps, target):
         try:
             success = 0
+            # Handle = operator because avrae only knows == why avrae
+            if curOps == '=': 
+                leftExp, rightExp = parse.split('=', 1)
+                parse = leftExp + "==" + rightExp
             result = d20.roll(parse, stringifier=BoolStringifier())
             dice = self.getDice(result)
 
