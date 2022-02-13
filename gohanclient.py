@@ -60,17 +60,17 @@ class GohanClient(commands.Bot):
 
     def bool_roll(self, args):
         try:
-            comment = ""
-            parse = args[0]
-            curOps = ""
+            comment = ""  # comment
+            parse = args[0]  # parsed dice expression
+            curOps = ""  # current operator
 
-            for ops in booleanOps:
+            for ops in booleanOps:  # check if in expression we have boolean operator
                 if(ops in parse):
                     curOps = ops
                 parse = re.sub(" "+ops, "", parse)  # remove spaces
-
+            # if expression have boolean operator, use boolean roll
             if curOps in booleanOps:
-                target = int(parse.split(curOps, 1)[1])
+                target = int(parse.split(curOps, 1)[1])  # get boolean target (right hand value)
                 result, success = self._bool_roll(parse, curOps, target)
 
                 if(len(args) > 1):
@@ -95,7 +95,8 @@ class GohanClient(commands.Bot):
         try:
             success = 0
             # Handle = operator because avrae only knows == why avrae
-            if curOps == '=': 
+            if curOps == '=':
+                # get the left and right hand expression, and join them with new operator ==
                 leftExp, rightExp = parse.split('=', 1)
                 parse = leftExp + "==" + rightExp
             result = d20.roll(parse, stringifier=BoolStringifier())
