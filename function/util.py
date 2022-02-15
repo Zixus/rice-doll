@@ -71,6 +71,7 @@ async def get_avatar(transcript: str):
         a = a.strip('"')
         file.append(
             {
+                'avatar_before': a.split('?')[0],
                 'filename': a.split('/')[-1].split('?')[0],
                 'image': io.BytesIO(requests.get(a, stream=True).content),
                 'avatar_string': a

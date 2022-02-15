@@ -6,6 +6,7 @@ from function.util import get_avatar, get_local_timestamp, millis
 import re
 import io
 import sys
+import mysql.connector
 
 import os
 from dotenv import load_dotenv
@@ -16,6 +17,10 @@ import chat_exporter  # noqa: E402
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
 load_dotenv('.env')
 DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
+MYSQL_HOST = os.getenv('MYSQL_HOST')
+MYSQL_USER = os.getenv('MYSQL_USER')
+MYSQL_PASS = os.getenv('MYSQL_PASS')
+MYSQL_DB = os.getenv('MYSQL_DB')
 
 bot = GohanClient()
 
@@ -24,12 +29,34 @@ bot = GohanClient()
 async def replace_avatar(file, trancript):
     transcript_string = trancript
     dump_channel = bot.get_channel(DUMP_CHANNEL)
+
+    mydb = mysql.connector.connect(
+        host=MYSQL_HOST,
+        user=MYSQL_USER,
+        password=MYSQL_PASS,
+        database=MYSQL_DB
+    )
+    cursor = mydb.cursor()
+    insert_query = "INSERT INTO avatars (avatar_before, avatar_after) VALUES (%s, %s)"
+    select_query = "SELECT avatar_after FROM avatars WHERE avatar_before = %s"
+
     for f in file:
         avatar_file = discord.File(f['image'], filename=f['filename'])
-        sent_image = await dump_channel.send(file=avatar_file)
-        attachment = sent_image.attachments[0].url
-        await asyncio.sleep(1)
+        avatar_before = (f["avatar_before"],)
+        cursor.execute(select_query, avatar_before)
+        data = cursor.fetchone()
+        if data:
+            attachment = data[0]
+        else:
+            sent_image = await dump_channel.send(file=avatar_file)
+            attachment = sent_image.attachments[0].url
+            avatar_insert = (f["avatar_before"], attachment)
+            cursor.execute(insert_query, avatar_insert)
+            mydb.commit()
+            await asyncio.sleep(1)
         transcript_string = transcript_string.replace(f['avatar_string'], attachment)
+    cursor.close()
+    mydb.close()
     return transcript_string
 
 # Command Function
