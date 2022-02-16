@@ -6,7 +6,7 @@ from function.util import get_avatar, get_local_timestamp, millis
 import re
 import io
 import sys
-import mysql.connector
+from db.sequel import Database
 
 import os
 from dotenv import load_dotenv
@@ -30,33 +30,20 @@ async def replace_avatar(file, trancript):
     transcript_string = trancript
     dump_channel = bot.get_channel(DUMP_CHANNEL)
 
-    mydb = mysql.connector.connect(
-        host=MYSQL_HOST,
-        user=MYSQL_USER,
-        password=MYSQL_PASS,
-        database=MYSQL_DB
-    )
-    cursor = mydb.cursor()
-    insert_query = "INSERT INTO avatars (avatar_before, avatar_after) VALUES (%s, %s)"
-    select_query = "SELECT avatar_after FROM avatars WHERE avatar_before = %s"
 
     for f in file:
         avatar_file = discord.File(f['image'], filename=f['filename'])
-        avatar_before = (f["avatar_before"],)
-        cursor.execute(select_query, avatar_before)
-        data = cursor.fetchone()
+        db = Database()
+        data = db.get_avatar_after(f["avatar_before"])
         if data:
             attachment = data[0]
         else:
             sent_image = await dump_channel.send(file=avatar_file)
             attachment = sent_image.attachments[0].url
-            avatar_insert = (f["avatar_before"], attachment)
-            cursor.execute(insert_query, avatar_insert)
-            mydb.commit()
+            db.insert_avatar(f["avatar_before"], attachment)
             await asyncio.sleep(1)
         transcript_string = transcript_string.replace(f['avatar_string'], attachment)
-    cursor.close()
-    mydb.close()
+    db.close
     return transcript_string
 
 # Command Function
