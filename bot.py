@@ -29,11 +29,9 @@ bot = GohanClient()
 async def replace_avatar(file, trancript):
     transcript_string = trancript
     dump_channel = bot.get_channel(DUMP_CHANNEL)
-
-
+    db = Database()
     for f in file:
         avatar_file = discord.File(f['image'], filename=f['filename'])
-        db = Database()
         data = db.get_avatar_after(f["avatar_before"])
         if data:
             attachment = data[0]
