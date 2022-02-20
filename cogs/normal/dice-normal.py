@@ -40,7 +40,6 @@ class Dice(commands.Cog, name="dice-normal"):
         message = "<@{}> ".format(ctx.author.id) + self.ghost_roll(args)
         await ctx.send(message)
 
-
     @commands.command(
         name="sotdl roll",
         description="command for rolling dice for shadow of demon lord",
@@ -52,7 +51,6 @@ class Dice(commands.Cog, name="dice-normal"):
             return
         message = "<@{}> ".format(ctx.author.id) + self.shadow_roll(args, False)
         await ctx.send(message)
-
 
     @commands.command(
         name="sotdl determined roll",

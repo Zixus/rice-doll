@@ -20,6 +20,7 @@ MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_PASS = os.getenv("MYSQL_PASS")
 MYSQL_DB = os.getenv("MYSQL_DB")
 
+
 # Cogs for Log-Related command
 class Log(commands.Cog, name="log-normal"):
     def __init__(self, bot):
@@ -28,7 +29,7 @@ class Log(commands.Cog, name="log-normal"):
     # Commands list
     @commands.command(
         name="logtxt",
-        description="import a channel messages to a log in txt format, can accept begin/end message id",
+        description="import channel messages in txt format, can accept begin/end message id",
         aliases=["lt"]
     )
     async def logtxt(self, ctx, begin_message_id: int = None, end_message_id: int = None):
@@ -54,7 +55,7 @@ class Log(commands.Cog, name="log-normal"):
 
     @commands.command(
         name="loghtml",
-        description="import a channel messages to a log in html format, can accept begin/end message id",
+        description="import a channel messages in html format, can accept begin/end message id",
         aliases=["lh", "logweb", "lw"]
     )
     async def loghtml(self, ctx, begin_message_id=None, end_message_id=None, filename=None):
@@ -98,7 +99,7 @@ class Log(commands.Cog, name="log-normal"):
         await ctx.send(file=transcript_file)
 
     # -----
-    
+
     # Non-commands method
     async def replace_avatar(self, file, trancript):
         transcript_string = trancript
@@ -118,6 +119,8 @@ class Log(commands.Cog, name="log-normal"):
         db.close
         return transcript_string
     # -----
+
+
 # cog setup
 def setup(bot):
     bot.add_cog(Log(bot))
