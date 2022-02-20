@@ -6,21 +6,23 @@ from function.util import get_avatar, get_local_timestamp, millis
 import re
 import io
 import sys
+
 from db.sequel import Database
 
 import os
 from dotenv import load_dotenv
-sys.path.insert(1, './DiscordChatExporterPy')
+
+sys.path.insert(1, "./DiscordChatExporterPy")
 import chat_exporter  # noqa: E402
 
 
 TIMESTAMP_TEMPLATE = "%d/%m/%Y, %H:%M"
-load_dotenv('.env')
-DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
-MYSQL_HOST = os.getenv('MYSQL_HOST')
-MYSQL_USER = os.getenv('MYSQL_USER')
-MYSQL_PASS = os.getenv('MYSQL_PASS')
-MYSQL_DB = os.getenv('MYSQL_DB')
+load_dotenv(".env")
+DUMP_CHANNEL = int(os.getenv("DUMP_CHANNEL"))
+MYSQL_HOST = os.getenv("MYSQL_HOST")
+MYSQL_USER = os.getenv("MYSQL_USER")
+MYSQL_PASS = os.getenv("MYSQL_PASS")
+MYSQL_DB = os.getenv("MYSQL_DB")
 
 bot = GohanClient()
 
@@ -31,7 +33,7 @@ async def replace_avatar(file, trancript):
     dump_channel = bot.get_channel(DUMP_CHANNEL)
     db = Database()
     for f in file:
-        avatar_file = discord.File(f['image'], filename=f['filename'])
+        avatar_file = discord.File(f["image"], filename=f["filename"])
         data = db.get_avatar_after(f["avatar_before"])
         if data:
             attachment = data[0]
@@ -40,48 +42,58 @@ async def replace_avatar(file, trancript):
             attachment = sent_image.attachments[0].url
             db.insert_avatar(f["avatar_before"], attachment)
             await asyncio.sleep(1)
-        transcript_string = transcript_string.replace(f['avatar_string'], attachment)
+        transcript_string = transcript_string.replace(f["avatar_string"], attachment)
     db.close
     return transcript_string
+
 
 # Command Function
 
 
-@bot.command(aliases=['h'])
+@bot.command(aliases=["h"])
 async def help(ctx):
     await ctx.send(embed=discord.Embed(description=bot.help()))
 
 
-@bot.command(aliases=['r'])
+@bot.command(aliases=["r"])
 async def roll(ctx, *args):
-    if(len(args) < 1):
+    if len(args) < 1:
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.bool_roll(args)
     await ctx.send(message)
 
 
-@bot.command(aliases=['gr'])
+@bot.command(aliases=["gr"])
 async def groll(ctx, *args):
-    if(len(args) < 1):
+    if len(args) < 1:
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.ghost_roll(args)
     await ctx.send(message)
 
 
-@bot.command(aliases=['sr'])
+@bot.command(aliases=["sr"])
 async def sroll(ctx, *args):
-    if(len(args) < 1):
+    if len(args) < 1:
         await ctx.send("Please input a roll argument")
         return
-    message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args)
+    message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args, False)
+    await ctx.send(message)
+
+
+@bot.command(aliases=["srd"])
+async def srolld(ctx, *args):
+    if len(args) < 1:
+        await ctx.send("Please input a roll argument")
+        return
+    message = "<@{}> ".format(ctx.author.id) + bot.shadow_roll(args, True)
     await ctx.send(message)
 
 
 @bot.command()
 async def boolRoll(ctx, *args):
-    if(len(args) < 1):
+    if len(args) < 1:
         await ctx.send("Please input a roll argument")
         return
     message = "<@{}> ".format(ctx.author.id) + bot.bool_roll(args)
@@ -91,8 +103,10 @@ async def boolRoll(ctx, *args):
 @bot.command()
 async def start(ctx, begin_message_id: int = None, end_message_id: int = None):
     if begin_message_id is None:
-        await ctx.send("Please input the message id of the log's beginning!\n"
-                       "example: /start 923913920327332")
+        await ctx.send(
+            "Please input the message id of the log's beginning!\n"
+            "example: /start 923913920327332"
+        )
         return
 
     if end_message_id is None:
@@ -104,15 +118,19 @@ async def start(ctx, begin_message_id: int = None, end_message_id: int = None):
 
     logger = Logger(ctx, from_date, to_date)
     await logger.message()
-    await ctx.send(f" From {from_date.strftime(TIMESTAMP_TEMPLATE)}"
-                   f" to {to_date.strftime(TIMESTAMP_TEMPLATE)} ")
+    await ctx.send(
+        f" From {from_date.strftime(TIMESTAMP_TEMPLATE)}"
+        f" to {to_date.strftime(TIMESTAMP_TEMPLATE)} "
+    )
 
 
-@bot.command(aliases=['lt'])
+@bot.command(aliases=["lt"])
 async def logtxt(ctx, begin_message_id: int = None, end_message_id: int = None):
     if begin_message_id is None:
-        await ctx.send("Please input the message id of the log's beginning!\n"
-                       "example: /logtxt 923913920327332")
+        await ctx.send(
+            "Please input the message id of the log's beginning!\n"
+            "example: /logtxt 923913920327332"
+        )
         return
 
     if end_message_id is None:
@@ -125,11 +143,11 @@ async def logtxt(ctx, begin_message_id: int = None, end_message_id: int = None):
     logger = Logger(ctx, from_date, to_date)
     filepath = await logger.log_to_textfile()
     filename = filepath.split("/")[-1].replace(" ", "_")
-    filename = re.sub(r'[^A-Za-z\d_\-.]+', '', filename)
+    filename = re.sub(r"[^A-Za-z\d_\-.]+", "", filename)
     await ctx.send(file=discord.File(filepath, filename=filename))
 
 
-@bot.command(aliases=['lh', 'logweb', 'lw'])
+@bot.command(aliases=["lh", "logweb", "lw"])
 async def loghtml(ctx, begin_message_id=None, end_message_id=None, filename=None):
     end_time = None
     begin_time = None
@@ -140,23 +158,32 @@ async def loghtml(ctx, begin_message_id=None, end_message_id=None, filename=None
     if end_message_id:
         end_time = (await ctx.fetch_message(end_message_id)).created_at + millis()
 
-    transcript = await chat_exporter.export(ctx.channel, ctx.guild, limit=None,
-                                            begin_time=begin_time, end_time=end_time,
-                                            set_timezone="Asia/Jakarta"
-                                            )
+    transcript = await chat_exporter.export(
+        ctx.channel,
+        ctx.guild,
+        limit=None,
+        begin_time=begin_time,
+        end_time=end_time,
+        set_timezone="Asia/Jakarta",
+    )
 
     if transcript is None:
         return
 
     if not filename:
-        filename = (f"{ctx.guild.name}-{ctx.message.channel.name}_"
-                    f"{get_local_timestamp(begin_time)} - {get_local_timestamp(end_time)}")
+        filename = (
+            f"{ctx.guild.name}-{ctx.message.channel.name}_"
+            f"{get_local_timestamp(begin_time)} - {get_local_timestamp(end_time)}"
+        )
         filename = filename.replace(" ", "_")
-        filename = re.sub(r'[^A-Za-z\d_\-.]+', '', filename)
+        filename = re.sub(r"[^A-Za-z\d_\-.]+", "", filename)
 
-    transcript = await replace_avatar(await get_avatar(transcript=transcript), trancript=transcript)
+    transcript = await replace_avatar(
+        await get_avatar(transcript=transcript), trancript=transcript
+    )
     await asyncio.sleep(1)
-    transcript_file = discord.File(io.BytesIO(transcript.encode()),
-                                   filename=f"transcript-{filename}.html")
+    transcript_file = discord.File(
+        io.BytesIO(transcript.encode()), filename=f"transcript-{filename}.html"
+    )
 
     await ctx.send(file=transcript_file)

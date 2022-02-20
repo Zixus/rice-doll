@@ -6,10 +6,10 @@ import d20
 import re
 import logging
 
-logging.basicConfig(format='[%(asctime)s] %(levelname)s: %(message)s')
+logging.basicConfig(format="[%(asctime)s] %(levelname)s: %(message)s")
 
-arithmeticOps = ['+', '-', '*', '/']
-booleanOps = ['=', '<', '<=', '>', '>=']
+arithmeticOps = ["+", "-", "*", "/"]
+booleanOps = ["=", "<", "<=", ">", ">="]
 
 
 class GohanClient(commands.Bot):
@@ -24,15 +24,15 @@ class GohanClient(commands.Bot):
             allowed_mentions=discord.AllowedMentions(
                 roles=False, users=True, everyone=False
             ),
-            intents=discord.Intents.all()
+            intents=discord.Intents.all(),
         )
 
     def getDice(self, roll, die=0):
         if die == 0:
-            return d20.utils.dfs(
-                roll.expr, lambda node: isinstance(node, d20.Dice))
+            return d20.utils.dfs(roll.expr, lambda node: isinstance(node, d20.Dice))
         return d20.utils.dfs(
-                roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die)
+            roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die
+        )
 
     def run(self, token):
         super().run(token)
@@ -51,7 +51,7 @@ class GohanClient(commands.Bot):
             comment = ""
             result = self._roll(parse)
 
-            if(len(args) > 1):
+            if len(args) > 1:
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
@@ -65,22 +65,29 @@ class GohanClient(commands.Bot):
             curOps = ""  # current operator
 
             for ops in booleanOps:  # check if in expression we have boolean operator
-                if(ops in parse):
+                if ops in parse:
                     curOps = ops
-                parse = re.sub(" "+ops, "", parse)  # remove spaces
+                parse = re.sub(" " + ops, "", parse)  # remove spaces
             # if expression have boolean operator, use boolean roll
             if curOps in booleanOps:
-                target = int(parse.split(curOps, 1)[1])  # get boolean target (right hand value)
+                target = int(
+                    parse.split(curOps, 1)[1]
+                )  # get boolean target (right hand value)
                 result, success = self._bool_roll(parse, curOps, target)
 
-                if(len(args) > 1):
+                if len(args) > 1:
                     comment = " ".join(args[1:])
                 return comment + " : " + str(result) + " = " + str(success) + " success"
             else:
                 return self.roll(args)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+                "[BoolRoll] "
+                + str(type(e))
+                + " : "
+                + str(e)
+                + ". Passing to vanilla roll"
+            )
             return self.roll(args)
 
     def _roll(self, parse):
@@ -95,9 +102,9 @@ class GohanClient(commands.Bot):
         try:
             success = 0
             # Handle = operator because avrae only knows == why avrae
-            if curOps == '=':
+            if curOps == "=":
                 # get the left and right hand expression, and join them with new operator ==
-                leftExp, rightExp = parse.split('=', 1)
+                leftExp, rightExp = parse.split("=", 1)
                 parse = leftExp + "==" + rightExp
             result = d20.roll(parse, stringifier=BoolStringifier())
             dice = self.getDice(result)
@@ -107,19 +114,19 @@ class GohanClient(commands.Bot):
                     raise Exception("No d6 dice found in the expression!")
 
                 for die in dice.values:
-                    if curOps == '=':
+                    if curOps == "=":
                         if die.number == target:
                             success = success + 1
-                    if curOps == '<':
+                    if curOps == "<":
                         if die.number < target:
                             success = success + 1
-                    if curOps == '<=':
+                    if curOps == "<=":
                         if die.number <= target:
                             success = success + 1
-                    if curOps == '>':
+                    if curOps == ">":
                         if die.number > target:
                             success = success + 1
-                    if curOps == '>=':
+                    if curOps == ">=":
                         if die.number >= target:
                             success = success + 1
 
@@ -128,7 +135,12 @@ class GohanClient(commands.Bot):
                 return self._roll(parse)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+                "[BoolRoll] "
+                + str(type(e))
+                + " : "
+                + str(e)
+                + ". Passing to vanilla roll"
+            )
             return self._roll(parse)
 
     def ghost_roll(self, args):
@@ -141,73 +153,78 @@ class GohanClient(commands.Bot):
 
             root = result.expr
             d6_dice = d20.utils.dfs(
-                root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
+                root, lambda node: isinstance(node, d20.Dice) and node.size == 6
+            )
 
             if d6_dice is None:
                 raise Exception("No d6 roll in the expression!")
 
-            last_die = d6_dice.values[d6_dice.num-1]
+            last_die = d6_dice.values[d6_dice.num - 1]
             if last_die.number == 6:
                 last_die.force_value(0)
                 ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
-            if(len(args) > 1):
+            if len(args) > 1:
                 comment = " ".join(args[1:])
             return comment + " : " + str(result) + ghost_warning
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
 
-    def shadow_roll(self, args):
+    def shadow_roll(self, args, determined):
         try:
-            roll_string = '1d20'
+            roll_string = "1d20"
             comment = ""
 
             rollinput = args[0]
 
             # Add modifier
-            numVal = int(re.search(r'\d+', rollinput).group())
+            numVal = int(re.search(r"\d+", rollinput).group())
 
-            if rollinput[0] == '+':
+            if rollinput[0] == "+":
                 mod = numVal
-                rollinput = rollinput.lstrip('+-')
-            elif rollinput[0] == '-':
+                rollinput = rollinput.lstrip("+-")
+            elif rollinput[0] == "-":
                 mod = -numVal
-                rollinput = rollinput.lstrip('+-')
+                rollinput = rollinput.lstrip("+-")
             else:
-                mod = numVal-10
+                mod = numVal - 10
 
             if mod != 0:
                 if mod < 0:
-                    roll_string += '-'
+                    roll_string += "-"
                 else:
-                    roll_string += '+'
+                    roll_string += "+"
                 roll_string += str(abs(mod))
 
             # Add Bane and Boon
-            boonNumSyntax = re.search(r'\+\d+', rollinput)
-            baneNumSyntax = re.search(r'\-\d+', rollinput)
+            boonNumSyntax = re.search(r"\+\d+", rollinput)
+            baneNumSyntax = re.search(r"\-\d+", rollinput)
 
             if boonNumSyntax:
                 boonVal = boonNumSyntax.group()
-                rollinput = rollinput.replace(boonVal, '')
+                rollinput = rollinput.replace(boonVal, "")
                 rollinput += boonVal[0] * int(boonVal[1:])
 
             if baneNumSyntax:
                 baneVal = baneNumSyntax.group()
-                rollinput = rollinput.replace(baneVal, '')
+                rollinput = rollinput.replace(baneVal, "")
                 rollinput += baneVal[0] * int(baneVal[1:])
 
             boon_bane_mod = rollinput.count("+") - rollinput.count("-")
             if boon_bane_mod != 0:
                 if boon_bane_mod < 0:
-                    roll_string += '-'
+                    roll_string += "-"
                 else:
-                    roll_string += '+'
-                roll_string += str(abs(boon_bane_mod)) + 'd6kh1'
+                    roll_string += "+"
+                boon_string = "d6"
+                if determined:
+                    boon_string += "ro1"
+                boon_string += "kh1"
+                roll_string += str(abs(boon_bane_mod)) + boon_string
 
             result = d20.roll(roll_string)
 
-            if(len(args) > 1):
+            if len(args) > 1:
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
