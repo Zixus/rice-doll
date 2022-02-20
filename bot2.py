@@ -22,7 +22,15 @@ else:
 
 intents = discord.Intents.all()
 
-bot = Bot(command_prefix="/", intents=intents)
+bot = Bot(
+        command_prefix="/", 
+        intents=intents,
+        case_insensitive=True,
+        description="Rice Doll",
+        allowed_mentions=discord.AllowedMentions(
+            roles=False, users=True, everyone=False
+        ),
+    )
 
 
 @bot.event

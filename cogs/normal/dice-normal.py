@@ -28,6 +28,44 @@ class Dice(commands.Cog, name="dice-normal"):
         message = "<@{}> ".format(ctx.author.id) + self.resolve_bool_roll(args)
         await ctx.send(message)
 
+    @commands.command(
+        name="ghostbuster roll",
+        description="command for rolling dice for ghost buster",
+        aliases=['gr'],
+    )
+    async def groll(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.ghost_roll(args)
+        await ctx.send(message)
+
+
+    @commands.command(
+        name="sotdl roll",
+        description="command for rolling dice for shadow of demon lord",
+        aliases=['sr'],
+    )
+    async def sroll(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.shadow_roll(args, False)
+        await ctx.send(message)
+
+
+    @commands.command(
+        name="sotdl determined roll",
+        description="command for rolling dice for shadow of demon lord with detemined status",
+        aliases=['srd'],
+    )
+    async def srolld(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.shadow_roll(args, True)
+        await ctx.send(message)
+
     # -----
 
     # Non-commands method
@@ -120,6 +158,92 @@ class Dice(commands.Cog, name="dice-normal"):
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
 
+    def ghost_roll(self, args):
+        try:
+            ghost_warning = ""
+            comment = ""
+
+            parse = re.sub(" +", "", args[0])  # remove spaces
+            result = d20.roll(parse)
+
+            root = result.expr
+            d6_dice = d20.utils.dfs(
+                root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
+
+            if d6_dice is None:
+                raise Exception("No d6 roll in the expression!")
+
+            last_die = d6_dice.values[d6_dice.num-1]
+            if last_die.number == 6:
+                last_die.force_value(0)
+                ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
+            if(len(args) > 1):
+                comment = " ".join(args[1:])
+            return comment + " : " + str(result) + ghost_warning
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
+
+    def shadow_roll(self, args, determined):
+        try:
+            roll_string = "1d20"
+            comment = ""
+
+            rollinput = args[0]
+
+            # Add modifier
+            numVal = int(re.search(r"\d+", rollinput).group())
+
+            if rollinput[0] == "+":
+                mod = numVal
+                rollinput = rollinput.lstrip("+-")
+            elif rollinput[0] == "-":
+                mod = -numVal
+                rollinput = rollinput.lstrip("+-")
+            else:
+                mod = numVal - 10
+
+            if mod != 0:
+                if mod < 0:
+                    roll_string += "-"
+                else:
+                    roll_string += "+"
+                roll_string += str(abs(mod))
+
+            # Add Bane and Boon
+            boonNumSyntax = re.search(r"\+\d+", rollinput)
+            baneNumSyntax = re.search(r"\-\d+", rollinput)
+
+            if boonNumSyntax:
+                boonVal = boonNumSyntax.group()
+                rollinput = rollinput.replace(boonVal, "")
+                rollinput += boonVal[0] * int(boonVal[1:])
+
+            if baneNumSyntax:
+                baneVal = baneNumSyntax.group()
+                rollinput = rollinput.replace(baneVal, "")
+                rollinput += baneVal[0] * int(baneVal[1:])
+
+            boon_bane_mod = rollinput.count("+") - rollinput.count("-")
+            if boon_bane_mod != 0:
+                if boon_bane_mod < 0:
+                    roll_string += "-"
+                else:
+                    roll_string += "+"
+                boon_string = "d6"
+                if determined:
+                    boon_string += "ro1"
+                boon_string += "kh1"
+                roll_string += str(abs(boon_bane_mod)) + boon_string
+
+            result = d20.roll(roll_string)
+
+            if len(args) > 1:
+                comment = " ".join(args[1:])
+            return comment + " : " + str(result)
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
     # -----
 
 
