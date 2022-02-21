@@ -98,6 +98,17 @@ class Log(commands.Cog, name="log-normal"):
 
         await ctx.send(file=transcript_file)
 
+    @commands.command(
+        name="logall",
+        description="import channel messages in html and txt format",
+        aliases=["la"]
+    )
+    async def logall(self, ctx, begin_message_id=None, end_message_id=None, filename=None):
+        await self.loghtml(context=ctx, begin_message_id=begin_message_id,
+                           end_message_id=end_message_id, filename=filename)
+        await self.logtxt(context=ctx, begin_message_id=begin_message_id,
+                          end_message_id=end_message_id)
+
     # -----
 
     # Non-commands method
