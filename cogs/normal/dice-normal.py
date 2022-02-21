@@ -1,132 +1,142 @@
-import discord
-from discord.ext import commands
-from custom_Stringifier import BoolStringifier
-
 import d20
-import re
 import logging
+import re
 
-logging.basicConfig(format="[%(asctime)s] %(levelname)s: %(message)s")
+from custom_stringifier import BoolStringifier
+from discord.ext import commands
 
-arithmeticOps = ["+", "-", "*", "/"]
-booleanOps = ["=", "<", "<=", ">", ">="]
+ARITHMETIC_OPS = ['+', '-', '*', '/']
+BOOLEAN_OPS = ['=', '<', '<=', '>', '>=']
 
 
-class GohanClient(commands.Bot):
-    errorMsg = "Something is wrong. Please check your input"
+# Cogs for Dice-Related command
+class Dice(commands.Cog, name="dice-normal"):
+    def __init__(self, bot):
+        self.bot = bot
 
-    def __init__(self):
-        super().__init__(
-            command_prefix="/",
-            help_command=None,
-            case_insensitive=True,
-            description="Rice Doll",
-            allowed_mentions=discord.AllowedMentions(
-                roles=False, users=True, everyone=False
-            ),
-            intents=discord.Intents.all(),
-        )
+    # Commands list
+    @commands.command(
+        name="roll",
+        description="command for rolling",
+        aliases=['r'],
+    )
+    async def roll(self, ctx, *args):
+        if (len(args) < 1):
+            await ctx.send("Please input a roll argument")
+            return
 
-    def getDice(self, roll, die=0):
+        message = "<@{}> ".format(ctx.author.id) + self.resolve_bool_roll(args)
+        await ctx.send(message)
+
+    @commands.command(
+        name="ghostbuster roll",
+        description="command for rolling dice for ghost buster",
+        aliases=['gr'],
+    )
+    async def groll(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.ghost_roll(args)
+        await ctx.send(message)
+
+    @commands.command(
+        name="sotdl roll",
+        description="command for rolling dice for shadow of demon lord",
+        aliases=['sr'],
+    )
+    async def sroll(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.shadow_roll(args, False)
+        await ctx.send(message)
+
+    @commands.command(
+        name="sotdl determined roll",
+        description="command for rolling dice for shadow of demon lord with detemined status",
+        aliases=['srd'],
+    )
+    async def srolld(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+        message = "<@{}> ".format(ctx.author.id) + self.shadow_roll(args, True)
+        await ctx.send(message)
+
+    # -----
+
+    # Non-commands method
+    def get_dice(self, roll, die=0):
         if die == 0:
-            return d20.utils.dfs(roll.expr, lambda node: isinstance(node, d20.Dice))
+            return d20.utils.dfs(
+                roll.expr, lambda node: isinstance(node, d20.Dice))
         return d20.utils.dfs(
-            roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die
-        )
+                roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die)
 
-    def run(self, token):
-        super().run(token)
-
-    def help(self):
-        help_desc = """
-            Usage: `{0}roll <syntax> [#<comments>]` or `{0}r <syntax> [#<comments>]`\n
-            No, this bot **can't do math**.\n
-            Refer to https://pypi.org/project/d20/ for the rolling syntax. =w=)7"
-            """
-        return help_desc.format(self.command_prefix)
-
-    def roll(self, args):
+    def resolve_roll(self, args):
         try:
             parse = re.sub(" +", "", args[0])  # remove spaces
             comment = ""
             result = self._roll(parse)
 
-            if len(args) > 1:
+            if(len(args) > 1):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
 
-    def bool_roll(self, args):
+    def resolve_bool_roll(self, args):
         try:
-            comment = ""  # comment
-            parse = args[0]  # parsed dice expression
-            curOps = ""  # current operator
+            comment = ""
+            parse = args[0]
+            curOps = ""
 
-            for ops in booleanOps:  # check if in expression we have boolean operator
-                if ops in parse:
+            for ops in BOOLEAN_OPS:
+                if(ops in parse):
                     curOps = ops
-                parse = re.sub(" " + ops, "", parse)  # remove spaces
-            # if expression have boolean operator, use boolean roll
-            if curOps in booleanOps:
-                target = int(
-                    parse.split(curOps, 1)[1]
-                )  # get boolean target (right hand value)
+                parse = re.sub(" "+ops, "", parse)  # remove spaces
+
+            if curOps in BOOLEAN_OPS:
+                target = int(parse.split(curOps, 1)[1])
                 result, success = self._bool_roll(parse, curOps, target)
 
-                if len(args) > 1:
+                if(len(args) > 1):
                     comment = " ".join(args[1:])
                 return comment + " : " + str(result) + " = " + str(success) + " success"
             else:
-                return self.roll(args)
+                return self.resolve_roll(args)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] "
-                + str(type(e))
-                + " : "
-                + str(e)
-                + ". Passing to vanilla roll"
-            )
-            return self.roll(args)
-
-    def _roll(self, parse):
-        try:
-            result = d20.roll(parse)
-            return result
-        except Exception as e:
-            logging.error(str(type(e)) + " : " + str(e))
-            return self.errorMsg
+                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+            return self.resolve_roll(args)
 
     def _bool_roll(self, parse, curOps, target):
+        print("_bool_roll")
         try:
             success = 0
-            # Handle = operator because avrae only knows == why avrae
-            if curOps == "=":
-                # get the left and right hand expression, and join them with new operator ==
-                leftExp, rightExp = parse.split("=", 1)
-                parse = leftExp + "==" + rightExp
             result = d20.roll(parse, stringifier=BoolStringifier())
-            dice = self.getDice(result)
+            dice = self.get_dice(result)
 
-            if curOps in booleanOps:
+            if curOps in BOOLEAN_OPS:
                 if dice is None:
                     raise Exception("No d6 dice found in the expression!")
 
                 for die in dice.values:
-                    if curOps == "=":
+                    if curOps == '=':
                         if die.number == target:
                             success = success + 1
-                    if curOps == "<":
+                    if curOps == '<':
                         if die.number < target:
                             success = success + 1
-                    if curOps == "<=":
+                    if curOps == '<=':
                         if die.number <= target:
                             success = success + 1
-                    if curOps == ">":
+                    if curOps == '>':
                         if die.number > target:
                             success = success + 1
-                    if curOps == ">=":
+                    if curOps == '>=':
                         if die.number >= target:
                             success = success + 1
 
@@ -135,13 +145,16 @@ class GohanClient(commands.Bot):
                 return self._roll(parse)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] "
-                + str(type(e))
-                + " : "
-                + str(e)
-                + ". Passing to vanilla roll"
-            )
+                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
             return self._roll(parse)
+
+    def _roll(self, parse):
+        try:
+            result = d20.roll(parse)
+            return result
+        except Exception as e:
+            logging.error(str(type(e)) + " : " + str(e))
+            return self.errorMsg
 
     def ghost_roll(self, args):
         try:
@@ -153,17 +166,16 @@ class GohanClient(commands.Bot):
 
             root = result.expr
             d6_dice = d20.utils.dfs(
-                root, lambda node: isinstance(node, d20.Dice) and node.size == 6
-            )
+                root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
 
             if d6_dice is None:
                 raise Exception("No d6 roll in the expression!")
 
-            last_die = d6_dice.values[d6_dice.num - 1]
+            last_die = d6_dice.values[d6_dice.num-1]
             if last_die.number == 6:
                 last_die.force_value(0)
                 ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
-            if len(args) > 1:
+            if(len(args) > 1):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result) + ghost_warning
         except Exception as e:
@@ -230,3 +242,9 @@ class GohanClient(commands.Bot):
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
+    # -----
+
+
+# cog setup
+def setup(bot):
+    bot.add_cog(Dice(bot))
