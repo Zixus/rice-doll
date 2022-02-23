@@ -6,7 +6,7 @@ from discord import ApplicationContext
 from discord.commands import Option
 from discord.ext import commands
 
-guild_ids = os.getenv("SLASH_GUILD_IDS").split(",")
+guild_ids = list(map(int, os.getenv("SLASH_GUILD_IDS").split(",")))
 
 
 class General(commands.Cog, name="general-slash"):
