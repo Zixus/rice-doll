@@ -78,3 +78,17 @@ async def get_avatar(transcript: str):
             }
         )
     return file
+
+
+def message_link2id(link_string: str = None) -> str:
+    '''
+    Function for converting message link to id.
+    Return message_id if the message is a message_list, otherwise just pass it.
+    '''
+    if link_string is None:
+        return link_string
+    if link_string.isnumeric():
+        return link_string
+    if link_string.split('/')[-1].isnumeric:
+        return link_string.split('/')[-1]
+    raise NameError("Input is not Message ID or Message Link")

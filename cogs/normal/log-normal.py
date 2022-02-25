@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 
 from function.chat_exporter import Logger
-from function.util import get_avatar, get_local_timestamp, millis
+from function.util import get_avatar, get_local_timestamp, millis, message_link2id
 from db.sequel import Database
 
 sys.path.insert(1, "./DiscordChatExporterPy")
@@ -32,7 +32,9 @@ class Log(commands.Cog, name="log-normal"):
         description="import channel messages in txt format, can accept begin/end message id",
         aliases=["lt"]
     )
-    async def logtxt(self, ctx, begin_message_id: int = None, end_message_id: int = None):
+    async def logtxt(self, ctx, begin_message_id=None, end_message_id=None):
+        begin_message_id = message_link2id(begin_message_id)
+        end_message_id = message_link2id(end_message_id)
         if begin_message_id is None:
             await ctx.send(
                 "Please input the message id of the log's beginning!\n"
@@ -61,6 +63,8 @@ class Log(commands.Cog, name="log-normal"):
     async def loghtml(self, ctx, begin_message_id=None, end_message_id=None, filename=None):
         end_time = None
         begin_time = None
+        begin_message_id = message_link2id(begin_message_id)
+        end_message_id = message_link2id(end_message_id)
 
         if begin_message_id:
             begin_time = (await ctx.fetch_message(begin_message_id)).created_at - millis()
