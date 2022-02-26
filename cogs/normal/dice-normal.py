@@ -6,7 +6,7 @@ from custom_stringifier import BoolStringifier
 from discord.ext import commands
 
 ARITHMETIC_OPS = ['+', '-', '*', '/']
-BOOLEAN_OPS = ['=', '<', '<=', '>', '>=']
+BOOLEAN_OPS = ['=', '==', '<', '<=', '>', '>=']
 
 
 # Cogs for Dice-Related command
@@ -113,9 +113,14 @@ class Dice(commands.Cog, name="dice-normal"):
             return self.resolve_roll(args)
 
     def _bool_roll(self, parse, curOps, target):
-        print("_bool_roll")
         try:
             success = 0
+
+            # Handling = operator
+            if curOps == '=':
+                leftExp, rightExp = parse.split('=')
+                parse = leftExp + "==" + rightExp
+
             result = d20.roll(parse, stringifier=BoolStringifier())
             dice = self.get_dice(result)
 
@@ -124,7 +129,7 @@ class Dice(commands.Cog, name="dice-normal"):
                     raise Exception("No d6 dice found in the expression!")
 
                 for die in dice.values:
-                    if curOps == '=':
+                    if curOps == '=' or curOps == '==':
                         if die.number == target:
                             success = success + 1
                     if curOps == '<':
