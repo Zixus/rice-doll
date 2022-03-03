@@ -156,7 +156,7 @@ class General(commands.Cog, name="general-slash"):
                             "• invite\n"
                             "• 8ball\n"
                             "• serverinfo\n"
-                            "\nFind more about a command by using **/help <command_name>**"),
+                            "\nJust try the command! There will be description to guide you :)"),
                     color=0xD75BF4
                 ).set_footer(text="Slash command is accesed by using / (duh)"),
             ]
