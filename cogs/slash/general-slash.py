@@ -5,6 +5,8 @@ from discord import ApplicationContext
 from discord.commands import Option
 from discord.ext import commands, pages
 
+from function.help import help_choices, get_help_embed
+
 
 class General(commands.Cog, name="general-slash"):
     def __init__(self, bot):
@@ -104,19 +106,12 @@ class General(commands.Cog, name="general-slash"):
                    "My reply is no.", "My sources say no.", "Outlook not so good.",
                    "Very doubtful."]
         embed = discord.Embed(
-            # title="**My Answer:**",
-            # description=f"{random.choice(answers)}",
             color=0x9C84EF
-        )
-        # embed.set_footer(
-        #     text=f"The question was: {question}"
-        # )
-        embed.add_field(
+        ).add_field(
             name="❓ Question",
             value=question,
             inline=False
-        )
-        embed.add_field(
+        ).add_field(
             name="🎱 Answer",
             value=f"{random.choice(answers)}",
             inline=False
@@ -134,12 +129,13 @@ class General(commands.Cog, name="general-slash"):
             str,
             "Command name that you want to get help with",  # noqa: F722
             required=False,
+            choices=help_choices
         )
     ) -> None:
         """
         Get help for bot commands.
         """
-        if not command_name:
+        if not command_name:  # base help menu
             help_pages = [
                 discord.Embed(
                     title="Normal Commands List",
@@ -167,11 +163,7 @@ class General(commands.Cog, name="general-slash"):
             paginator = pages.Paginator(pages=help_pages, loop_pages=True, show_disabled=False)
             await paginator.respond(ctx.interaction, ephemeral=True)
         else:
-            embed = discord.Embed(
-                description="ya",
-                color=0xD75BF4
-            )
-            await ctx.respond(embed=embed)
+            await ctx.respond(embed=get_help_embed(command_name=command_name))
 
     # -----
 
