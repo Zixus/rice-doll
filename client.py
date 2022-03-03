@@ -21,6 +21,7 @@ else:
     load_dotenv('.env')
 
 intents = discord.Intents.all()
+debug_guilds = os.getenv('DEBUG_GUILD_IDS')
 
 bot = Bot(
         command_prefix="/",
@@ -30,6 +31,7 @@ bot = Bot(
         allowed_mentions=discord.AllowedMentions(
             roles=False, users=True, everyone=False
         ),
+        debug_guilds=[] if not debug_guilds else [int(g) for g in debug_guilds.split(',')],
     )
 
 

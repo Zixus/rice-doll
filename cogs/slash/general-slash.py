@@ -1,12 +1,9 @@
 import random
-import os
 
 import discord
 from discord import ApplicationContext
 from discord.commands import Option
-from discord.ext import commands
-
-guild_ids = list(map(int, os.getenv("SLASH_GUILD_IDS").split(",")))
+from discord.ext import commands, pages
 
 
 class General(commands.Cog, name="general-slash"):
@@ -17,7 +14,6 @@ class General(commands.Cog, name="general-slash"):
     @commands.slash_command(
         name="serverinfo",
         description="Get some useful (or not) information about the server.",
-        guild_ids=guild_ids
     )
     async def serverinfo(self, ctx: ApplicationContext) -> None:
         """
@@ -63,7 +59,6 @@ class General(commands.Cog, name="general-slash"):
     @commands.slash_command(
         name="invite",
         description="Get the invite link of the bot to be able to invite it.",
-        guild_ids=guild_ids,
     )
     async def invite(self, ctx: ApplicationContext) -> None:
         """
@@ -85,7 +80,6 @@ class General(commands.Cog, name="general-slash"):
     @commands.slash_command(
         name="8ball",
         description="Ask any question to the bot.",
-        guild_ids=guild_ids,
     )
     async def eight_ball(
         self,
@@ -110,14 +104,74 @@ class General(commands.Cog, name="general-slash"):
                    "My reply is no.", "My sources say no.", "Outlook not so good.",
                    "Very doubtful."]
         embed = discord.Embed(
-            title="**My Answer:**",
-            description=f"{random.choice(answers)}",
+            # title="**My Answer:**",
+            # description=f"{random.choice(answers)}",
             color=0x9C84EF
         )
-        embed.set_footer(
-            text=f"The question was: {question}"
+        # embed.set_footer(
+        #     text=f"The question was: {question}"
+        # )
+        embed.add_field(
+            name="❓ Question",
+            value=question,
+            inline=False
+        )
+        embed.add_field(
+            name="🎱 Answer",
+            value=f"{random.choice(answers)}",
+            inline=False
         )
         await ctx.respond(embed=embed)
+
+    @commands.slash_command(
+        name="help",
+        description="Please help yourself.",
+    )
+    async def help(
+        self,
+        ctx: ApplicationContext,
+        command_name: Option(
+            str,
+            "Command name that you want to get help with",  # noqa: F722
+            required=False,
+        )
+    ) -> None:
+        """
+        Get help for bot commands.
+        """
+        if not command_name:
+            help_pages = [
+                discord.Embed(
+                    title="Normal Commands List",
+                    description=(
+                            "• roll\n"
+                            "• groll\n"
+                            "• sroll\n"
+                            "• srolld\n"
+                            "• logtxt\n"
+                            "• loghtml\n"
+                            "• logall\n"
+                            "\nFind more about a command by using **/help <command_name>**"),
+                    color=0xD75BF4
+                ).set_footer(text="Normal command is accessed by using bot's prefix"),
+                discord.Embed(
+                    title="Slash Commands List",
+                    description=(
+                            "• invite\n"
+                            "• 8ball\n"
+                            "• serverinfo\n"
+                            "\nFind more about a command by using **/help <command_name>**"),
+                    color=0xD75BF4
+                ).set_footer(text="Slash command is accesed by using / (duh)"),
+            ]
+            paginator = pages.Paginator(pages=help_pages, loop_pages=True, show_disabled=False)
+            await paginator.respond(ctx.interaction, ephemeral=True)
+        else:
+            embed = discord.Embed(
+                description="ya",
+                color=0xD75BF4
+            )
+            await ctx.respond(embed=embed)
 
     # -----
 
