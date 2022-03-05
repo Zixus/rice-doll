@@ -31,7 +31,7 @@ class Dice(commands.Cog, name="dice-normal"):
         await ctx.send(message)
 
     @commands.command(
-        name="ghostbuster roll",
+        name="groll",
         description="command for rolling dice for ghost buster",
         aliases=['gr'],
     )
@@ -43,7 +43,7 @@ class Dice(commands.Cog, name="dice-normal"):
         await ctx.send(message)
 
     @commands.command(
-        name="sotdl roll",
+        name="sroll",
         description="command for rolling dice for shadow of demon lord",
         aliases=['sr'],
     )
@@ -55,7 +55,7 @@ class Dice(commands.Cog, name="dice-normal"):
         await ctx.send(message)
 
     @commands.command(
-        name="sotdl determined roll",
+        name="srolld",
         description="command for rolling dice for shadow of demon lord with detemined status",
         aliases=['srd'],
     )
