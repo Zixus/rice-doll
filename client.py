@@ -46,6 +46,11 @@ async def on_ready() -> None:
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
 
+    # Set error channel
+    global err_channel
+    err_channel = bot.get_channel(int(os.getenv("ERROR_CHANNEL")))
+
+
 # Removes the default help command of discord.py to be able to create our custom help command.
 bot.remove_command("help")
 
@@ -107,7 +112,8 @@ async def on_slash_command_error(interaction: Interaction, error: Exception) -> 
         )
         print("A user without proper permission tried to execute a command.")
         return await interaction.response.send_message(embed=embed, ephemeral=True)
-    raise error
+
+    await err_channel.send(error)
 
 
 @bot.event
@@ -133,6 +139,8 @@ async def on_command_error(context: Context, error) -> None:
     :param context: The normal command that failed executing.
     :param error: The error that has been faced.
     """
+    ignored_exception = (commands.CommandNotFound, )
+
     if isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
@@ -149,7 +157,19 @@ async def on_command_error(context: Context, error) -> None:
             color=0xE02B2B
         )
         await context.send(embed=embed)
-    raise error
+    elif isinstance(error, commands.CommandInvokeError):  # Handle error when custom error raised
+        if isinstance(error.original, discord.InvalidArgument):  # Specific custom errors handler
+            await context.send(f'Wrong input: {str(error.original)}!')
+    elif isinstance(error, ignored_exception):  # Ignore some error
+        return
+
+    # Construct Error Message
+    err_msg = ''
+    if context.command:
+        err_msg += f'[{context.command.name.upper()}] '
+    err_msg += str(error)
+
+    await err_channel.send(err_msg)
 
 # Run the bot with the token
 bot.run(os.getenv('DISCORD_TOKEN'))

@@ -2,6 +2,7 @@ import d20
 import logging
 import re
 
+from discord import InvalidArgument
 from custom_stringifier import BoolStringifier
 from discord.ext import commands
 
@@ -13,6 +14,7 @@ BOOLEAN_OPS = ['=', '==', '<', '<=', '>', '>=']
 class Dice(commands.Cog, name="dice-normal"):
     def __init__(self, bot):
         self.bot = bot
+        self.errorMsg = "Something is wrong. Please check your input"
 
     # Commands list
     @commands.command(
@@ -162,30 +164,26 @@ class Dice(commands.Cog, name="dice-normal"):
             return self.errorMsg
 
     def ghost_roll(self, args):
-        try:
-            ghost_warning = ""
-            comment = ""
+        ghost_warning = ""
+        comment = ""
 
-            parse = re.sub(" +", "", args[0])  # remove spaces
-            result = d20.roll(parse)
+        parse = re.sub(" +", "", args[0])  # remove spaces
+        result = d20.roll(parse)
 
-            root = result.expr
-            d6_dice = d20.utils.dfs(
-                root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
+        root = result.expr
+        d6_dice = d20.utils.dfs(
+            root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
 
-            if d6_dice is None:
-                raise Exception("No d6 roll in the expression!")
+        if d6_dice is None:
+            raise InvalidArgument("No d6 roll in the expression!")
 
-            last_die = d6_dice.values[d6_dice.num-1]
-            if last_die.number == 6:
-                last_die.force_value(0)
-                ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
-            if(len(args) > 1):
-                comment = " ".join(args[1:])
-            return comment + " : " + str(result) + ghost_warning
-        except Exception as e:
-            logging.error(str(type(e)) + " : " + str(e))
-            return self.errorMsg
+        last_die = d6_dice.values[d6_dice.num-1]
+        if last_die.number == 6:
+            last_die.force_value(0)
+            ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
+        if(len(args) > 1):
+            comment = " ".join(args[1:])
+        return comment + " : " + str(result) + ghost_warning
 
     def shadow_roll(self, args, determined):
         try:
