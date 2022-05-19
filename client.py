@@ -24,7 +24,7 @@ intents = discord.Intents.all()
 debug_guilds = os.getenv('DEBUG_GUILD_IDS')
 
 bot = Bot(
-        command_prefix="/",
+        command_prefix=["/", ";;"],
         intents=intents,
         case_insensitive=True,
         description="Rice Doll",
