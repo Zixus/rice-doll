@@ -36,7 +36,7 @@ class Dice(commands.Cog, name="dice-normal"):
         if message.author == self.bot.user or message.content[0] == '`':
             return
 
-        if self.find_inline_roll(message.content):
+        if self.find_inline_roll(message.content) and not(message.author.bot):
             reply = "<@{}> ".format(message.author.id) + '\n'
             for x in self.find_inline_roll(message.content):
                 reply += self.resolve_bool_roll(x.split()).replace(': ', '', 1) + '\n'
