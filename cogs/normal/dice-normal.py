@@ -27,8 +27,20 @@ class Dice(commands.Cog, name="dice-normal"):
             await ctx.send("Please input a roll argument")
             return
 
+        print(self.resolve_bool_roll(args))
         message = "<@{}> ".format(ctx.author.id) + self.resolve_bool_roll(args)
         await ctx.send(message)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user or message.content[0] == '`':
+            return
+
+        if self.find_inline_roll(message.content):
+            reply = "<@{}> ".format(message.author.id) + '\n'
+            for x in self.find_inline_roll(message.content):
+                reply += self.resolve_bool_roll(x.split()) + '\n'
+            await message.channel.send(reply)
 
     @commands.command(
         name="groll",
@@ -245,6 +257,9 @@ class Dice(commands.Cog, name="dice-normal"):
         except Exception as e:
             logging.error(str(type(e)) + " : " + str(e))
             return self.errorMsg
+
+    def find_inline_roll(self, str):
+        return re.findall(r'\[\[(.+?)\]\]', str)
     # -----
 
 
