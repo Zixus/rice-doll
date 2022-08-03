@@ -39,7 +39,7 @@ class Dice(commands.Cog, name="dice-normal"):
         if self.find_inline_roll(message.content):
             reply = "<@{}> ".format(message.author.id) + '\n'
             for x in self.find_inline_roll(message.content):
-                reply += self.resolve_bool_roll(x.split()) + '\n'
+                reply += self.resolve_bool_roll(x.split()).replace(': ', '', 1) + '\n'
             await message.channel.send(reply)
 
     @commands.command(
