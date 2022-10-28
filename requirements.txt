@@ -4,6 +4,6 @@ flake8==4.0.1
 aiohttp
 pytz
 grapheme
-emoji
+emoji==1.7.0
 requests
 mysql-connector-python
