@@ -23,7 +23,7 @@ jobs:
       run: flake8 .
   deploy:
     runs-on: ubuntu-latest
-    environment: VPS
+    environment: OracleVPS
     needs: lint
     steps:
       - name: deploy rice-doll bot

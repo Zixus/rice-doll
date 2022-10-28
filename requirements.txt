@@ -6,4 +6,4 @@ pytz
 grapheme
 emoji
 requests
-mysql-connector
+mysql-connector-python
