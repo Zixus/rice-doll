@@ -69,7 +69,7 @@ def load_commands(command_type: str) -> None:
 
 if __name__ == "__main__":
     # automatically load slash and normal command on respective folders
-    load_commands("slash")
+    # load_commands("slash")
     load_commands("normal")
 
 
