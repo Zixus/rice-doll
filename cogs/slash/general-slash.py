@@ -119,7 +119,7 @@ class General(commands.Cog, name="general-slash"):
         await ctx.respond(embed=embed)
 
     @commands.slash_command(
-        name="help",
+        name="help-rice-doll",
         description="Please help yourself.",
     )
     async def help(
