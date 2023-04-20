@@ -23,6 +23,11 @@ class Database:
         )
         self.cursor = self.connection.cursor()
 
+    def close(self) -> None:
+        self.cursor.close()
+        self.connection.close()
+
+class Avatar(Database):
     def get_avatar_after(self, avatar_before_url: str) -> str:
         select_query = "SELECT avatar_after FROM avatars WHERE avatar_before = %s"
         tuple_avatar_before_url = (avatar_before_url,)
@@ -34,7 +39,3 @@ class Database:
         avatar_insert = (avatar_bafore_url, avatar_after_url)
         self.cursor.execute(insert_query, avatar_insert)
         self.connection.commit()
-
-    def close(self) -> None:
-        self.cursor.close()
-        self.connection.close()
