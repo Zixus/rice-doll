@@ -1,9 +1,6 @@
 import discord
 import random
 from discord.ext import commands
-from functools import partial
-import copy
-
 
 
 # Cogs for Log-Related command
@@ -40,27 +37,25 @@ class Embed(commands.Cog, name="embed-normal"):
                 url = args[i+1]
             elif args[i] == '-color':
                 color = args[i+1]
-            
-        if color == None:
+
+        if color is None:
             color = self.random_color()
 
         author = ctx.message.author
-        
         embed = discord.Embed(
             title=title,
             description=desc,
             url=url,
             color=discord.Color(self.hex_to_int(color))
         )
-        if footer != None:
+        if footer is not None:
             embed.set_footer(text=footer)
-        if thumb != None:
+        if thumb is not None:
             embed.set_thumbnail(url=thumb)
-        if image != None:
+        if image is not None:
             embed.set_image(url=image)
         embed.set_author(name=author.display_name, icon_url=author.display_avatar)
         await ctx.send(embed=embed)
-
 
     # -----
 

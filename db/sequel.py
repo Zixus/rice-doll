@@ -27,6 +27,7 @@ class Database:
         self.cursor.close()
         self.connection.close()
 
+
 class Avatar(Database):
     def get_avatar_after(self, avatar_before_url: str) -> str:
         select_query = "SELECT avatar_after FROM avatars WHERE avatar_before = %s"
