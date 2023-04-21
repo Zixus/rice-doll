@@ -89,7 +89,7 @@ class Logger:
 
         message_list = await self.message_list()
 
-        with open(filepath, 'w+') as f:
+        with open(filepath, 'w+', encoding="utf-8") as f:
             for message in message_list:
                 text_content = message.clean_content
                 text_content = strip_markdown_txt(text_content)
