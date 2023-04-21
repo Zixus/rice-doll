@@ -13,8 +13,7 @@ class Embed(commands.Cog, name="embed-normal"):
         name="embed",
         description="add embed"
     )
-    async def embed(self, ctx, *, args):
-        args = args.split()
+    async def embed(self, ctx, *args):
         title = None
         desc = None
         thumb = None
