@@ -9,7 +9,7 @@ from discord.ext import commands
 
 from function.chat_exporter import Logger
 from function.util import get_avatar, get_local_timestamp, millis, message_link2id
-from db.sequel import Avatar
+from db.sequel import AvatarDB
 
 sys.path.insert(1, "./DiscordChatExporterPy")
 import chat_exporter  # noqa: E402
@@ -121,7 +121,7 @@ class Log(commands.Cog, name="log-normal"):
     async def replace_avatar(self, file, trancript):
         transcript_string = trancript
         dump_channel = self.bot.get_channel(DUMP_CHANNEL)
-        db = Avatar()
+        db = AvatarDB()
         for f in file:
             avatar_file = discord.File(f["image"], filename=f["filename"])
             data = db.get_avatar_after(f["avatar_before"])

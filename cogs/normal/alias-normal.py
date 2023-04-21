@@ -28,7 +28,8 @@ class Alias(commands.Cog, name="alias-normal"):
         # Commands list
     @commands.command(
         name="servalias",
-        description="add server alias"
+        description="add server alias",
+        aliases=['serveralias']
     )
     async def create_server_alias(self, ctx, name, *, command):
         server_id = ctx.guild.id
@@ -85,7 +86,6 @@ class Alias(commands.Cog, name="alias-normal"):
         command = macro_split[0]
         args = macro_split[1:] if len(macro_split) > 1 else []
         command_obj = self.bot.get_command(command)
-        print(args)
         if command_obj is not None:
             await ctx.invoke(command_obj, *args)
     # TODO: Delete, Rename, Check Command

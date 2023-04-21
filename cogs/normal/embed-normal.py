@@ -21,7 +21,7 @@ class Embed(commands.Cog, name="embed-normal"):
         footer = None
         url = None
         color = None
-        for i in range(len(args)):
+        for i in range(len(args)-1):
             if args[i] == '-title':
                 title = args[i+1]
             elif args[i] == '-desc':

@@ -28,7 +28,7 @@ class Database:
         self.connection.close()
 
 
-class Avatar(Database):
+class AvatarDB(Database):
     def get_avatar_after(self, avatar_before_url: str) -> str:
         select_query = "SELECT avatar_after FROM avatars WHERE avatar_before = %s"
         tuple_avatar_before_url = (avatar_before_url,)
@@ -44,7 +44,7 @@ class Avatar(Database):
 
 class AliasDB(Database):
     def select_user_alias(self, user_id: str) -> tuple:
-        select_query = "SELECT name FROM user_alias WHERE user_id = %s"
+        select_query = "SELECT name FROM user_alias WHERE user_id = %s ORDER BY name ASC"
         tuple_user_id = (user_id,)
         self.cursor.execute(select_query, tuple_user_id)
         return self.cursor.fetchall()
@@ -65,13 +65,13 @@ class AliasDB(Database):
         self.connection.commit()
 
     def delete_user_alias(self, name: str, user_id: str) -> None:
-        insert_query = "DELETE FROM user_alias WHERE name = %s AND user_id = %s"
+        delete_query = "DELETE FROM user_alias WHERE name = %s AND user_id = %s"
         alias_delete = (name, user_id)
-        self.cursor.execute(insert_query, alias_delete)
+        self.cursor.execute(delete_query, alias_delete)
         self.connection.commit()
 
     def select_server_alias(self, server_id: str) -> tuple:
-        select_query = "SELECT name FROM server_alias WHERE server_id = %s"
+        select_query = "SELECT name FROM server_alias WHERE server_id = %s ORDER BY name ASC"
         tuple_server_id = (server_id,)
         self.cursor.execute(select_query, tuple_server_id)
         return self.cursor.fetchall()
@@ -92,7 +92,7 @@ class AliasDB(Database):
         self.connection.commit()
 
     def delete_server_alias(self, name: str, server_id: str) -> None:
-        insert_query = "DELETE FROM server_alias WHERE name = %s AND server_id = %s"
+        delete_query = "DELETE FROM server_alias WHERE name = %s AND server_id = %s"
         alias_delete = (name, server_id)
-        self.cursor.execute(insert_query, alias_delete)
+        self.cursor.execute(delete_query, alias_delete)
         self.connection.commit()
