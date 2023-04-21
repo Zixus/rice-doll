@@ -5,7 +5,7 @@ from discord.ext import commands
 from db.sequel import AliasDB
 
 
-# Cogs for Log-Related command
+# Cogs for Alias-Related command
 class Alias(commands.Cog, name="alias-normal"):
     def __init__(self, bot):
         self.bot = bot
@@ -25,7 +25,6 @@ class Alias(commands.Cog, name="alias-normal"):
         db.close
         await ctx.send(f'User alias `{name}` created for command `{command}`')
 
-        # Commands list
     @commands.command(
         name="servalias",
         description="add server alias",

@@ -3,7 +3,7 @@ import random
 from discord.ext import commands
 
 
-# Cogs for Log-Related command
+# Cogs for Embed-Related command
 class Embed(commands.Cog, name="embed-normal"):
     def __init__(self, bot):
         self.bot = bot
