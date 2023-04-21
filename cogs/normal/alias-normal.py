@@ -70,7 +70,7 @@ class Alias(commands.Cog, name="alias-normal"):
     @commands.command(
         name="call",
         description="call alias",
-        aliases=[';']     
+        aliases=[';']
     )
     async def call_alias(self, ctx, name):
         user_id = ctx.message.author.id
