@@ -1,5 +1,6 @@
 import discord
 import random
+import shlex
 from discord.ext import commands
 
 from db.sequel import AliasDB
@@ -81,7 +82,7 @@ class Alias(commands.Cog, name="alias-normal"):
             macro = db.get_server_command(name=name, server_id=server_id)
         if macro is None:
             return
-        macro_split = macro[0].split()
+        macro_split = shlex.split(macro[0])
         command = macro_split[0]
         args = macro_split[1:] if len(macro_split) > 1 else []
         command_obj = self.bot.get_command(command)
