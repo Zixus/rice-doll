@@ -141,6 +141,7 @@ async def on_command_error(context: Context, error) -> None:
     :param error: The error that has been faced.
     """
     ignored_exception = (commands.CommandNotFound, )
+
     if isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",

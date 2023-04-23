@@ -1,6 +1,5 @@
 import mysql.connector
 import os
-from dotenv import load_dotenv
 
 DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
 MYSQL_HOST = os.getenv('MYSQL_HOST')

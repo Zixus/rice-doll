@@ -36,9 +36,9 @@ class Alias(commands.Cog, name="alias-normal"):
         aliases=['serveralias']
     )
     async def create_server_alias(self, ctx, name, *, command):
-        server_id = ctx.guild.id        
+        server_id = ctx.guild.id
         command_obj = ctx.bot.get_command(command.split()[0])
-        if not command_obj:            
+        if not command_obj:
             await ctx.send("Command not exist.")
             return
         if not self.is_valid_alias_commnad(command_obj):
