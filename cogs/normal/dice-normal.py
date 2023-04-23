@@ -36,7 +36,7 @@ class Dice(commands.Cog, name="dice-normal"):
         if message.author == self.bot.user or message.content[0] == '`':
             return
 
-        if self.find_inline_roll(message.content) and not(message.author.bot):
+        if self.find_inline_roll(message.content) and not (message.author.bot):
             reply = "<@{}> ".format(message.author.id) + '\n'
             for x in self.find_inline_roll(message.content):
                 reply += self.resolve_bool_roll(x.split()).replace(': ', '', 1) + '\n'
@@ -94,7 +94,7 @@ class Dice(commands.Cog, name="dice-normal"):
             comment = ""
             result = self._roll(parse)
 
-            if(len(args) > 1):
+            if (len(args) > 1):
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
@@ -108,7 +108,7 @@ class Dice(commands.Cog, name="dice-normal"):
             curOps = ""
 
             for ops in BOOLEAN_OPS:
-                if(ops in parse):
+                if (ops in parse):
                     curOps = ops
                 parse = re.sub(" "+ops, "", parse)  # remove spaces
 
@@ -116,7 +116,7 @@ class Dice(commands.Cog, name="dice-normal"):
                 target = int(parse.split(curOps, 1)[1])
                 result, success = self._bool_roll(parse, curOps, target)
 
-                if(len(args) > 1):
+                if (len(args) > 1):
                     comment = " ".join(args[1:])
                 return comment + " : " + str(result) + " = " + str(success) + " success"
             else:
@@ -193,7 +193,7 @@ class Dice(commands.Cog, name="dice-normal"):
         if last_die.number == 6:
             last_die.force_value(0)
             ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
-        if(len(args) > 1):
+        if (len(args) > 1):
             comment = " ".join(args[1:])
         return comment + " : " + str(result) + ghost_warning
 

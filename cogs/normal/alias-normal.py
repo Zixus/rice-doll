@@ -18,8 +18,12 @@ class Alias(commands.Cog, name="alias-normal"):
     )
     async def create_user_alias(self, ctx, name, *, command):
         user_id = ctx.message.author.id
-        if not ctx.bot.get_command(command.split()[0]):
+        command_obj = ctx.bot.get_command(command.split()[0])
+        if not command_obj:
             await ctx.send("Command not exist.")
+            return
+        if not self.is_valid_alias_commnad(command_obj):
+            await ctx.send(f'Command `{command_obj.name}` is not available for alias.')
             return
         db = AliasDB()
         db.upsert_user_alias(name=name, user_id=user_id, command=command)
@@ -33,8 +37,12 @@ class Alias(commands.Cog, name="alias-normal"):
     )
     async def create_server_alias(self, ctx, name, *, command):
         server_id = ctx.guild.id
-        if not ctx.bot.get_command(command.split()[0]):
+        command_obj = ctx.bot.get_command(command.split()[0])
+        if not command_obj:
             await ctx.send("Command not exist.")
+            return
+        if not self.is_valid_alias_commnad(command_obj):
+            await ctx.send(f'Command `{command_obj.name}` is not available for alias.')
             return
         db = AliasDB()
         db.upsert_server_alias(name=name, server_id=server_id, command=command)
@@ -100,6 +108,18 @@ class Alias(commands.Cog, name="alias-normal"):
 
     def hex_to_int(self, hex_color):
         return int(hex_color[1:], 16)
+
+    # Command that doesn't have *args param is not valid for alias for now
+    def is_valid_alias_commnad(self, command_obj) -> bool:
+        params = command_obj.clean_params
+
+        if len(params) > 1:
+            return False
+
+        if str(params['args']) != '*args':
+            return False
+
+        return True
 
     # -----
 

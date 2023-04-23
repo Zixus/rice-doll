@@ -14,11 +14,12 @@ from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
 ENV = os.getenv("ENV")
+env_file = '.env'
 
 if ENV == 'dev':
-    load_dotenv('.env.dev')
-else:
-    load_dotenv('.env')
+    env_file += '.dev'
+
+load_dotenv(env_file, override=True)
 
 intents = discord.Intents.all()
 debug_guilds = os.getenv('DEBUG_GUILD_IDS')
