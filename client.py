@@ -19,7 +19,7 @@ env_file = '.env'
 if ENV == 'dev':
     env_file += '.dev'
 
-load_dotenv('.env.dev', override=True)
+load_dotenv(env_file, override=True)
 
 intents = discord.Intents.all()
 debug_guilds = os.getenv('DEBUG_GUILD_IDS')
