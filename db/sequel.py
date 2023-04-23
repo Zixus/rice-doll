@@ -2,7 +2,6 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 
-load_dotenv('.env')
 DUMP_CHANNEL = int(os.getenv('DUMP_CHANNEL'))
 MYSQL_HOST = os.getenv('MYSQL_HOST')
 MYSQL_USER = os.getenv('MYSQL_USER')

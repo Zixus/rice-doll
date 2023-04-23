@@ -14,11 +14,12 @@ from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
 ENV = os.getenv("ENV")
+env_file = '.env'
 
 if ENV == 'dev':
-    load_dotenv('.env.dev')
-else:
-    load_dotenv('.env')
+    env_file += '.dev'
+
+load_dotenv('.env.dev', override=True)
 
 intents = discord.Intents.all()
 debug_guilds = os.getenv('DEBUG_GUILD_IDS')
@@ -140,7 +141,7 @@ async def on_command_error(context: Context, error) -> None:
     :param error: The error that has been faced.
     """
     ignored_exception = (commands.CommandNotFound, )
-
+    print(error)
     if isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
