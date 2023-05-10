@@ -19,7 +19,7 @@ class Database:
             password=MYSQL_PASS,
             database=MYSQL_DB
         )
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(buffered=True)
 
     def close(self) -> None:
         self.cursor.close()
