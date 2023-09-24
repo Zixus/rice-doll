@@ -14,26 +14,24 @@ from discord.ext.commands import Bot
 from discord.ext.commands import Context
 
 ENV = os.getenv("ENV")
-env_file = '.env'
+env_file = ".env"
 
-if ENV == 'dev':
-    env_file += '.dev'
+if ENV == "dev":
+    env_file += ".dev"
 
 load_dotenv(env_file, override=True)
 
 intents = discord.Intents.all()
-debug_guilds = os.getenv('DEBUG_GUILD_IDS')
+debug_guilds = os.getenv("DEBUG_GUILD_IDS")
 
 bot = Bot(
-        command_prefix=["/", ";;"],
-        intents=intents,
-        case_insensitive=True,
-        description="Rice Doll",
-        allowed_mentions=discord.AllowedMentions(
-            roles=False, users=True, everyone=False
-        ),
-        debug_guilds=[] if not debug_guilds else [int(g) for g in debug_guilds.split(',')],
-    )
+    command_prefix=["/", ";;"],
+    intents=intents,
+    case_insensitive=True,
+    description="Rice Doll",
+    allowed_mentions=discord.AllowedMentions(roles=False, users=True, everyone=False),
+    debug_guilds=[] if not debug_guilds else [int(g) for g in debug_guilds.split(",")],
+)
 
 
 @bot.event
@@ -56,12 +54,12 @@ async def on_ready() -> None:
 bot.remove_command("help")
 
 
-def load_commands(command_type: str) -> None:
+async def load_commands(command_type: str) -> None:
     for file in os.listdir(f"./cogs/{command_type}"):
         if file.endswith(".py"):
             extension = file[:-3]
             try:
-                bot.load_extension(f"cogs.{command_type}.{extension}")
+                await bot.load_extension(f"cogs.{command_type}.{extension}")
                 print(f"Loaded extension '{extension}'")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
@@ -94,7 +92,7 @@ async def on_slash_command(interaction: Interaction) -> None:
     print(
         f"Executed {interaction.data.name} command in {interaction.guild.name} "
         f"(ID: {interaction.guild.id}) by {interaction.user} (ID: {interaction.user.id})"
-        )
+    )
 
 
 @bot.event
@@ -107,9 +105,10 @@ async def on_slash_command_error(interaction: Interaction, error: Exception) -> 
     if isinstance(error, commands.errors.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
-            description="You are missing the permission(s) `" + ", ".join(
-                error.missing_permissions) + "` to execute this command!",
-            color=0xE02B2B
+            description="You are missing the permission(s) `"
+            + ", ".join(error.missing_permissions)
+            + "` to execute this command!",
+            color=0xE02B2B,
         )
         print("A user without proper permission tried to execute a command.")
         return await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -130,7 +129,7 @@ async def on_command_completion(context: Context) -> None:
         f"Executed {executed_command} command in {context.message.guild.name} "
         f"(ID: {context.message.guild.id}) by {context.message.author} "
         f"(ID: {context.message.author.id})"
-        )
+    )
 
 
 @bot.event
@@ -140,14 +139,15 @@ async def on_command_error(context: Context, error) -> None:
     :param context: The normal command that failed executing.
     :param error: The error that has been faced.
     """
-    ignored_exception = (commands.CommandNotFound, )
+    ignored_exception = (commands.CommandNotFound,)
 
     if isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
-            description="You are missing the permission(s) `" + ", ".join(
-                error.missing_permissions) + "` to execute this command!",
-            color=0xE02B2B
+            description="You are missing the permission(s) `"
+            + ", ".join(error.missing_permissions)
+            + "` to execute this command!",
+            color=0xE02B2B,
         )
         await context.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):
@@ -155,22 +155,27 @@ async def on_command_error(context: Context, error) -> None:
             title="Error!",
             description=str(error).capitalize(),
             # We need to capitalize because the command arguments have no capital letter in the code
-            color=0xE02B2B
+            color=0xE02B2B,
         )
         await context.send(embed=embed)
-    elif isinstance(error, commands.CommandInvokeError):  # Handle error when custom error raised
-        if isinstance(error.original, discord.InvalidArgument):  # Specific custom errors handler
-            await context.send(f'Wrong input: {str(error.original)}!')
+    elif isinstance(
+        error, commands.CommandInvokeError
+    ):  # Handle error when custom error raised
+        if isinstance(
+            error.original, discord.InvalidArgument
+        ):  # Specific custom errors handler
+            await context.send(f"Wrong input: {str(error.original)}!")
     elif isinstance(error, ignored_exception):  # Ignore some error
         return
 
     # Construct Error Message
-    err_msg = ''
+    err_msg = ""
     if context.command:
-        err_msg += f'[{context.command.name.upper()}] '
+        err_msg += f"[{context.command.name.upper()}] "
     err_msg += str(error)
 
     await err_channel.send(err_msg)
 
+
 # Run the bot with the token
-bot.run(os.getenv('DISCORD_TOKEN'))
+bot.run(os.getenv("DISCORD_TOKEN"))
