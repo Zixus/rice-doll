@@ -54,7 +54,7 @@ async def on_ready() -> None:
 bot.remove_command("help")
 
 
-async def load_commands(command_type: str) -> None:
+def load_commands(command_type: str) -> None:
     for file in os.listdir(f"./cogs/{command_type}"):
         if file.endswith(".py"):
             extension = file[:-3]
