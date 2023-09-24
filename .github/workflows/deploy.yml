@@ -38,5 +38,5 @@ jobs:
             git pull origin master
             git submodule update --init --recursive
             pip3 install -r requirements.txt
-            pm2 restart rice-doll
+            pm2 restart rice-doll-prod.config.js
             echo 'rice-doll has been deployed!'
