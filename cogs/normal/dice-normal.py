@@ -6,8 +6,8 @@ from discord import InvalidArgument
 from custom_stringifier import BoolStringifier
 from discord.ext import commands
 
-ARITHMETIC_OPS = ['+', '-', '*', '/']
-BOOLEAN_OPS = ['=', '==', '<', '<=', '>', '>=']
+ARITHMETIC_OPS = ["+", "-", "*", "/"]
+BOOLEAN_OPS = ["=", "==", "<", "<=", ">", ">="]
 
 
 # Cogs for Dice-Related command
@@ -20,10 +20,10 @@ class Dice(commands.Cog, name="dice-normal"):
     @commands.command(
         name="roll",
         description="command for rolling",
-        aliases=['r'],
+        aliases=["r"],
     )
     async def roll(self, ctx, *args):
-        if (len(args) < 1):
+        if len(args) < 1:
             await ctx.send("Please input a roll argument")
             return
 
@@ -31,21 +31,49 @@ class Dice(commands.Cog, name="dice-normal"):
         message = "<@{}> ".format(ctx.author.id) + self.resolve_bool_roll(args)
         await ctx.send(message)
 
+    @commands.command(
+        name="||roll",
+        description="command for rolling, but spoiler-ed",
+        aliases=["||r"],
+    )
+    async def roll(self, ctx, *args):
+        if len(args) < 1:
+            await ctx.send("Please input a roll argument")
+            return
+
+        print(self.resolve_bool_roll(args))
+        message = "<@{}> ".format(ctx.author.id) + self.resolve_bool_roll(args)
+        message = "||" + message.replace("||", "") + "||"
+        await ctx.send(message)
+
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user or message.content[0] == '`':
+        if message.author == self.bot.user or message.content[0] == "`":
             return
 
         if self.find_inline_roll(message.content) and not (message.author.bot):
-            reply = "<@{}> ".format(message.author.id) + '\n'
+            reply = "<@{}> ".format(message.author.id) + "\n"
             for x in self.find_inline_roll(message.content):
-                reply += self.resolve_bool_roll(x.split()).replace(': ', '', 1) + '\n'
+                if "||" in x:
+                    y = x.replace("||", "")
+                    reply += (
+                        "||"
+                        + (
+                            self.resolve_bool_roll(y.split()).replace(": ", "", 1)
+                            + "\n"
+                        )
+                        + "||"
+                    )
+                else:
+                    reply += (
+                        self.resolve_bool_roll(x.split()).replace(": ", "", 1) + "\n"
+                    )
             await message.channel.send(reply)
 
     @commands.command(
         name="groll",
         description="command for rolling dice for ghost buster",
-        aliases=['gr'],
+        aliases=["gr"],
     )
     async def groll(self, ctx, *args):
         if len(args) < 1:
@@ -57,7 +85,7 @@ class Dice(commands.Cog, name="dice-normal"):
     @commands.command(
         name="sroll",
         description="command for rolling dice for shadow of demon lord",
-        aliases=['sr'],
+        aliases=["sr"],
     )
     async def sroll(self, ctx, *args):
         if len(args) < 1:
@@ -69,7 +97,7 @@ class Dice(commands.Cog, name="dice-normal"):
     @commands.command(
         name="srolld",
         description="command for rolling dice for shadow of demon lord with detemined status",
-        aliases=['srd'],
+        aliases=["srd"],
     )
     async def srolld(self, ctx, *args):
         if len(args) < 1:
@@ -83,10 +111,10 @@ class Dice(commands.Cog, name="dice-normal"):
     # Non-commands method
     def get_dice(self, roll, die=0):
         if die == 0:
-            return d20.utils.dfs(
-                roll.expr, lambda node: isinstance(node, d20.Dice))
+            return d20.utils.dfs(roll.expr, lambda node: isinstance(node, d20.Dice))
         return d20.utils.dfs(
-                roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die)
+            roll.expr, lambda node: isinstance(node, d20.Dice) and node.size == die
+        )
 
     def resolve_roll(self, args):
         try:
@@ -94,7 +122,7 @@ class Dice(commands.Cog, name="dice-normal"):
             comment = ""
             result = self._roll(parse)
 
-            if (len(args) > 1):
+            if len(args) > 1:
                 comment = " ".join(args[1:])
             return comment + " : " + str(result)
         except Exception as e:
@@ -108,22 +136,27 @@ class Dice(commands.Cog, name="dice-normal"):
             curOps = ""
 
             for ops in BOOLEAN_OPS:
-                if (ops in parse):
+                if ops in parse:
                     curOps = ops
-                parse = re.sub(" "+ops, "", parse)  # remove spaces
+                parse = re.sub(" " + ops, "", parse)  # remove spaces
 
             if curOps in BOOLEAN_OPS:
                 target = int(parse.split(curOps, 1)[1])
                 result, success = self._bool_roll(parse, curOps, target)
 
-                if (len(args) > 1):
+                if len(args) > 1:
                     comment = " ".join(args[1:])
                 return comment + " : " + str(result) + " = " + str(success) + " success"
             else:
                 return self.resolve_roll(args)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+                "[BoolRoll] "
+                + str(type(e))
+                + " : "
+                + str(e)
+                + ". Passing to vanilla roll"
+            )
             return self.resolve_roll(args)
 
     def _bool_roll(self, parse, curOps, target):
@@ -131,8 +164,8 @@ class Dice(commands.Cog, name="dice-normal"):
             success = 0
 
             # Handling = operator
-            if curOps == '=':
-                leftExp, rightExp = parse.split('=')
+            if curOps == "=":
+                leftExp, rightExp = parse.split("=")
                 parse = leftExp + "==" + rightExp
 
             result = d20.roll(parse, stringifier=BoolStringifier())
@@ -143,19 +176,19 @@ class Dice(commands.Cog, name="dice-normal"):
                     raise Exception("No d6 dice found in the expression!")
 
                 for die in dice.values:
-                    if curOps == '=' or curOps == '==':
+                    if curOps == "=" or curOps == "==":
                         if die.number == target:
                             success = success + 1
-                    if curOps == '<':
+                    if curOps == "<":
                         if die.number < target:
                             success = success + 1
-                    if curOps == '<=':
+                    if curOps == "<=":
                         if die.number <= target:
                             success = success + 1
-                    if curOps == '>':
+                    if curOps == ">":
                         if die.number > target:
                             success = success + 1
-                    if curOps == '>=':
+                    if curOps == ">=":
                         if die.number >= target:
                             success = success + 1
 
@@ -164,7 +197,12 @@ class Dice(commands.Cog, name="dice-normal"):
                 return self._roll(parse)
         except Exception as e:
             logging.warning(
-                "[BoolRoll] " + str(type(e)) + " : " + str(e) + ". Passing to vanilla roll")
+                "[BoolRoll] "
+                + str(type(e))
+                + " : "
+                + str(e)
+                + ". Passing to vanilla roll"
+            )
             return self._roll(parse)
 
     def _roll(self, parse):
@@ -184,16 +222,17 @@ class Dice(commands.Cog, name="dice-normal"):
 
         root = result.expr
         d6_dice = d20.utils.dfs(
-            root, lambda node: isinstance(node, d20.Dice) and node.size == 6)
+            root, lambda node: isinstance(node, d20.Dice) and node.size == 6
+        )
 
         if d6_dice is None:
             raise InvalidArgument("No d6 roll in the expression!")
 
-        last_die = d6_dice.values[d6_dice.num-1]
+        last_die = d6_dice.values[d6_dice.num - 1]
         if last_die.number == 6:
             last_die.force_value(0)
             ghost_warning = "| Uh-oh, **GHOST DIE!** 👻"
-        if (len(args) > 1):
+        if len(args) > 1:
             comment = " ".join(args[1:])
         return comment + " : " + str(result) + ghost_warning
 
@@ -259,7 +298,8 @@ class Dice(commands.Cog, name="dice-normal"):
             return self.errorMsg
 
     def find_inline_roll(self, str):
-        return re.findall(r'\[\[(.+?)\]\]', str)
+        return re.findall(r"\[\[(.+?)\]\]", str)
+
     # -----
 
 
