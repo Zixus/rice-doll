@@ -4,6 +4,7 @@ Credit Template Copyright © Krypton 2021 - https://github.com/kkrypt0nn (https:
 
 import os
 import platform
+import asyncio
 from dotenv import load_dotenv
 
 
@@ -69,7 +70,7 @@ async def load_commands(command_type: str) -> None:
 if __name__ == "__main__":
     # automatically load slash and normal command on respective folders
     # load_commands("slash")
-    load_commands("normal")
+    asyncio.create_task(load_commands("normal"))
 
 
 @bot.event
