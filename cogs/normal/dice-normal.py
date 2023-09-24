@@ -36,7 +36,7 @@ class Dice(commands.Cog, name="dice-normal"):
         description="command for rolling, but spoiler-ed",
         aliases=["||r"],
     )
-    async def roll(self, ctx, *args):
+    async def roll_spoil(self, ctx, *args):
         if len(args) < 1:
             await ctx.send("Please input a roll argument")
             return
