@@ -70,7 +70,7 @@ async def load_commands(command_type: str) -> None:
 if __name__ == "__main__":
     # automatically load slash and normal command on respective folders
     # load_commands("slash")
-    asyncio.create_task(load_commands("normal"))
+    asyncio.run(load_commands("normal"))
 
 
 @bot.event
