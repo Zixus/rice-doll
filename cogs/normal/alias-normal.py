@@ -87,6 +87,7 @@ class Alias(commands.Cog, name="alias-normal"):
         args = macro_split[1:] if len(macro_split) > 1 else []
         command_obj = self.bot.get_command(command)
         if command_obj is not None:
+            await ctx.message.delete()
             await ctx.invoke(command_obj, *args)
     # TODO: Delete, Rename, Check Command
 
