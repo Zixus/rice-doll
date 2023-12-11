@@ -1,5 +1,4 @@
 import discord
-import random
 import shlex
 from discord.ext import commands
 
@@ -23,7 +22,7 @@ class Alias(commands.Cog, name="alias-normal"):
             return
         db = AliasDB()
         db.upsert_user_alias(name=name, user_id=user_id, command=command)
-        db.close
+        db.close()
         await ctx.send(f'User alias `{name}` created for command `{command}`')
 
     @commands.command(
@@ -38,7 +37,7 @@ class Alias(commands.Cog, name="alias-normal"):
             return
         db = AliasDB()
         db.upsert_server_alias(name=name, server_id=server_id, command=command)
-        db.close
+        db.close()
         await ctx.send(f'Server alias `{name}` created for command `{command}`')
 
     @commands.command(
@@ -73,7 +72,7 @@ class Alias(commands.Cog, name="alias-normal"):
         description="call alias",
         aliases=[';']
     )
-    async def call_alias(self, ctx, name):
+    async def call_alias(self, ctx, name, *call_args):
         user_id = ctx.message.author.id
         server_id = ctx.guild.id
         db = AliasDB()
@@ -85,6 +84,7 @@ class Alias(commands.Cog, name="alias-normal"):
         macro_split = shlex.split(macro[0])
         command = macro_split[0]
         args = macro_split[1:] if len(macro_split) > 1 else []
+        args.extend(call_args)
         command_obj = self.bot.get_command(command)
         if command_obj is not None:
             await ctx.message.delete()
@@ -94,13 +94,6 @@ class Alias(commands.Cog, name="alias-normal"):
     # -----
 
     # Non-commands method
-    def random_color(self):
-        hex_chars = '0123456789abcdef'
-        color = '#' + ''.join(random.choice(hex_chars) for _ in range(6))
-        return color
-
-    def hex_to_int(self, hex_color):
-        return int(hex_color[1:], 16)
 
     # -----
 
