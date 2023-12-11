@@ -4,6 +4,16 @@ from discord.ext import commands
 
 
 # Cogs for Embed-Related command
+def random_color():
+    hex_chars = '0123456789abcdef'
+    color = '#' + ''.join(random.choice(hex_chars) for _ in range(6))
+    return color
+
+
+def hex_to_int(hex_color):
+    return int(hex_color[1:], 16)
+
+
 class Embed(commands.Cog, name="embed-normal"):
     def __init__(self, bot):
         self.bot = bot
@@ -21,6 +31,7 @@ class Embed(commands.Cog, name="embed-normal"):
         footer = None
         url = None
         color = None
+        is_clean = False
         for i in range(len(args)-1):
             if args[i] == '-title':
                 title = args[i+1]
@@ -36,16 +47,18 @@ class Embed(commands.Cog, name="embed-normal"):
                 url = args[i+1]
             elif args[i] == '-color':
                 color = args[i+1]
+            elif args[i] == '-clean':
+                is_clean = True
 
         if color is None:
-            color = self.random_color()
+            color = random_color()
 
         author = ctx.message.author
         embed = discord.Embed(
             title=title,
             description=desc,
             url=url,
-            color=discord.Color(self.hex_to_int(color))
+            color=discord.Color(hex_to_int(color))
         )
         if footer is not None:
             embed.set_footer(text=footer)
@@ -53,19 +66,13 @@ class Embed(commands.Cog, name="embed-normal"):
             embed.set_thumbnail(url=thumb)
         if image is not None:
             embed.set_image(url=image)
-        embed.set_author(name=author.display_name, icon_url=author.display_avatar)
+        if not is_clean:
+            embed.set_author(name=author.display_name, icon_url=author.display_avatar)
         await ctx.send(embed=embed)
 
     # -----
 
     # Non-commands method
-    def random_color(self):
-        hex_chars = '0123456789abcdef'
-        color = '#' + ''.join(random.choice(hex_chars) for _ in range(6))
-        return color
-
-    def hex_to_int(self, hex_color):
-        return int(hex_color[1:], 16)
 
     # -----
 
