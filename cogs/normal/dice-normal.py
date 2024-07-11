@@ -15,8 +15,24 @@ class Dice(commands.Cog, name="dice-normal"):
     def __init__(self, bot):
         self.bot = bot
         self.errorMsg = "Something is wrong. Please check your input"
+        self.blacklist = {}
 
     # Commands list
+    @commands.command(
+        name="blacklist",
+        description="command to toggle inline roll blacklist",
+    )
+    async def blacklist(self, ctx, *args):
+        key = f"{ctx.guild.id}-{ctx.author.id}"
+        if key in self.blacklist:
+            message = "is not blacklisted for inline roll in this server."
+            self.blacklist.pop(key)
+        else:
+            message = "is blacklisted for inline roll in this server."
+            self.blacklist[key] = True
+        message = "<@{}> ".format(ctx.author.id) + message
+        await ctx.send(message)
+
     @commands.command(
         name="roll",
         description="command for rolling",
@@ -51,7 +67,8 @@ class Dice(commands.Cog, name="dice-normal"):
         if (
             message.content == "" or
             message.author == self.bot.user or
-            str(message.content[0]) == "`"
+            str(message.content[0]) == "`" or
+            f"{message.guild.id}-{message.author.id}" in self.blacklist
         ):
             return
 
