@@ -48,7 +48,11 @@ class Dice(commands.Cog, name="dice-normal"):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user or str(message.content[0]) == "`":
+        if (
+            message.content == "" or
+            message.author == self.bot.user or
+            str(message.content[0]) == "`"
+        ):
             return
 
         if self.find_inline_roll(message.content) and not (message.author.bot):
